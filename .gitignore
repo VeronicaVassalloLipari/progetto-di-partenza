@@ -1,0 +1,14 @@
+# Uscita di compilazione Maven
+target/
+
+# Configurazione locale dei CLI: contiene credenziali, non si committa
+.claude/settings.local.json
+.opencode/opencode.local.json
+
+# Ambiente e segreti
+.env
+
+# Metadati di editor e di sistema
+.idea/
+.vscode/
+.DS_Store

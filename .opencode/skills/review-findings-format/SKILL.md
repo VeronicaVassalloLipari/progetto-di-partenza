@@ -1,13 +1,13 @@
 ---
 name: review-findings-format
-description: Formato condiviso e obbligatorio dei rilievi per i tre reviewer LipariBank (movimenti, importi, contratto API). Usala quando produci o leggi una review, prima di scrivere l'output. Fissa file e riga, gravita, correzione proposta e non applicata, tono pari e un blocco machine-readable identico per tutti e tre.
+description: Formato condiviso e obbligatorio dei rilievi per i quattro reviewer LipariBank (movimenti, importi, contratto API, sicurezza). Usala quando produci o leggi una review, prima di scrivere l'output. Fissa file e riga, gravita, correzione proposta e non applicata, tono pari e un blocco machine-readable identico per tutti e quattro.
 ---
 
 # Skill: review-findings-format
 
 ## A cosa serve
 
-Tre reviewer che scrivono in tre modi diversi non si possono leggere ne aggregare. Questa skill fissa una sola forma del rilievo, uguale per tutti e tre. Ogni reviewer la carica prima di produrre l'output. Un quarto reviewer scritto domani deve solo caricare questa skill per uscire nello stesso formato, senza che nessuno glielo spieghi.
+Quattro reviewer che scrivono in quattro modi diversi non si possono leggere ne aggregare. Questa skill fissa una sola forma del rilievo, uguale per tutti e quattro. Ogni reviewer la carica prima di produrre l'output. Un quinto reviewer scritto domani deve solo caricare questa skill per uscire nello stesso formato, senza che nessuno glielo spieghi.
 
 ## Quando usarla
 
@@ -26,7 +26,7 @@ Sempre, quando stai per produrre una review del LipariBank. Non serve per scrive
 ## Formato di output (obbligatorio)
 
 ```
-REVIEW: <movements|amount-compliance|api-contract>
+REVIEW: <movements|amount-compliance|api-contract|security>
 TARGET: <file o diff revisionato>
 VERDICT: PASS | CHANGES_REQUIRED
 
@@ -50,7 +50,7 @@ NOTES: <opzionale, massimo 2 righe; ometti se non serve>
 Se non ci sono rilievi:
 
 ```
-REVIEW: <movements|amount-compliance|api-contract>
+REVIEW: <movements|amount-compliance|api-contract|security>
 TARGET: <file o diff revisionato>
 VERDICT: PASS
 
@@ -86,4 +86,4 @@ FINDINGS:
 
 ## Nota per chi eredita
 
-La forma vive qui una volta sola. Se cambia, cambia per tutti e tre. Non duplicarla nei system prompt dei reviewer.
+La forma vive qui una volta sola. Se cambia, cambia per tutti e quattro. Non duplicarla nei system prompt dei reviewer.

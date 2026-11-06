@@ -1,0 +1,16 @@
+[2026-11-06T15:01:19.611Z] RUN 2026-11-06T15-01-19-609Z target=src/main/java/com/lipari/bank/security/SecurityConfig.java diff=- reviewers=security-reviewer,missing-reviewer
+[2026-11-06T15:01:19.611Z] BUDGET seconds=180 tokens=120000 costUsd=unlimited
+[2026-11-06T15:01:20.523Z] SERVER http://127.0.0.1:4096
+[2026-11-06T15:01:20.530Z] START security-reviewer
+[2026-11-06T15:01:20.531Z] START missing-reviewer
+[2026-11-06T15:01:20.531Z] FAIL missing-reviewer reviewer sconosciuto: missing-reviewer
+[2026-11-06T15:02:16.914Z] END security-reviewer status=ok findings=4 tokens=69641 cost=0
+[2026-11-06T15:02:16.974Z] REPORT docs\review-runs\test-missing\report.md exit=3 findings=4 tokens=69641 cost=0
+[2026-11-06T15:16:45.773Z] RUN 2026-11-06T15-16-45-771Z target=src/main/java/com/lipari/bank/security/SecurityConfig.java diff=- reviewers=security-reviewer,missing-reviewer
+[2026-11-06T15:16:45.876Z] BUDGET seconds=180 tokens=120000 costUsd=unlimited
+[2026-11-06T15:16:46.769Z] SERVER http://127.0.0.1:4096
+[2026-11-06T15:16:46.775Z] START security-reviewer
+[2026-11-06T15:16:46.776Z] START missing-reviewer
+[2026-11-06T15:16:46.777Z] FAIL missing-reviewer agent non trovato: .opencode\agents\missing-reviewer.md
+[2026-11-06T15:17:32.554Z] END security-reviewer status=ok findings=3 tokens=69082 cost=0
+[2026-11-06T15:17:32.589Z] REPORT docs\review-runs\test-missing\report.md exit=3 findings=3 tokens=69082 cost=0

@@ -1,0 +1,7 @@
+[2026-11-06T14:59:03.541Z] RUN 2026-11-06T14-59-03-538Z target=src/main/java/com/lipari/bank/security/JwtService.java diff=- reviewers=security-reviewer
+[2026-11-06T14:59:03.543Z] BUDGET seconds=180 tokens=5000 costUsd=unlimited
+[2026-11-06T14:59:04.337Z] SERVER http://127.0.0.1:4096
+[2026-11-06T14:59:04.344Z] START security-reviewer
+[2026-11-06T14:59:08.728Z] BUDGET EXCEEDED tokens
+[2026-11-06T14:59:08.806Z] FAIL security-reviewer budget: interrotto: tokens
+[2026-11-06T14:59:08.844Z] REPORT docs\review-runs\test-budget\report.md exit=2 findings=0 tokens=7912 cost=0

@@ -1,0 +1,218 @@
+{
+  "schemaVersion": "1.0",
+  "run": {
+    "id": "2026-11-06T15-16-45-771Z",
+    "target": "src/main/java/com/lipari/bank/security/SecurityConfig.java",
+    "diff": null,
+    "startedAt": "2026-11-06T15:16:45.877Z",
+    "finishedAt": "2026-11-06T15:17:32.560Z",
+    "durationMs": 46683,
+    "command": "C:\\Program Files\\nodejs\\node.exe C:\\Book progetti\\Progetto AI Agentic con Claude Code\\progetto-di-partenza\\progetto-di-partenza\\.opencode\\code-review-suite.ts src/main/java/com/lipari/bank/security/SecurityConfig.java --reviewers security-reviewer,missing-reviewer --max-seconds 180 --max-tokens 120000 --max-cost 0 --out docs/review-runs/test-missing",
+    "model": null,
+    "failOn": "CRITICAL"
+  },
+  "outcome": "reviewer_failed",
+  "exitCode": 3,
+  "parallelism": {
+    "reviewerCount": 2,
+    "startedSessions": 1,
+    "maxStartSkewMs": 0,
+    "firstStart": "2026-11-06T15:16:46.775Z",
+    "lastStart": "2026-11-06T15:16:46.775Z",
+    "firstEnd": "2026-11-06T15:17:32.554Z",
+    "lastEnd": "2026-11-06T15:17:32.554Z",
+    "overlappingPairs": 0,
+    "totalPairs": 0,
+    "overlap": false
+  },
+  "budget": {
+    "limits": {
+      "seconds": 180,
+      "tokens": 120000,
+      "costUsd": 0
+    },
+    "used": {
+      "seconds": 46.683,
+      "tokens": 69082,
+      "providerCostUsd": 0,
+      "estimatedCostUsd": 0,
+      "effectiveCostUsd": 0
+    },
+    "status": "ok",
+    "exceededBy": null,
+    "rates": {
+      "inputUsdPerMTok": 0,
+      "outputUsdPerMTok": 0
+    }
+  },
+  "reviewers": [
+    {
+      "reviewer": "security-reviewer",
+      "status": "ok",
+      "startedAt": "2026-11-06T15:16:46.775Z",
+      "finishedAt": "2026-11-06T15:17:32.554Z",
+      "durationMs": 45780,
+      "sessionId": "ses_e4e90f47fffeXUdWzgka9Mz7nH",
+      "usage": {
+        "input": 14886,
+        "output": 1372,
+        "reasoning": 2904,
+        "cacheRead": 49920,
+        "cacheWrite": 0,
+        "total": 69082,
+        "cost": 0
+      },
+      "findingsCount": 3,
+      "error": null,
+      "parseError": null,
+      "rawTextFile": "docs\\review-runs\\test-missing\\raw\\security-reviewer.txt"
+    },
+    {
+      "reviewer": "missing-reviewer",
+      "status": "failed",
+      "startedAt": "2026-11-06T15:16:46.776Z",
+      "finishedAt": "2026-11-06T15:16:46.777Z",
+      "durationMs": 1,
+      "sessionId": null,
+      "usage": {
+        "input": 0,
+        "output": 0,
+        "reasoning": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "total": 0,
+        "cost": 0
+      },
+      "findingsCount": 0,
+      "error": "agent non trovato: .opencode\\agents\\missing-reviewer.md",
+      "parseError": null,
+      "rawTextFile": "docs\\review-runs\\test-missing\\raw\\missing-reviewer.txt",
+      "text": ""
+    }
+  ],
+  "summary": {
+    "findingsTotal": 3,
+    "findingsUnique": 3,
+    "duplicatesRemoved": 0,
+    "conflicts": 0,
+    "bySeverity": {
+      "CRITICAL": 0,
+      "HIGH": 0,
+      "MEDIUM": 2,
+      "LOW": 1
+    },
+    "byReviewer": [
+      {
+        "reviewer": "security-reviewer",
+        "status": "ok",
+        "findings": 3
+      },
+      {
+        "reviewer": "missing-reviewer",
+        "status": "failed",
+        "findings": 0
+      }
+    ]
+  },
+  "findings": [
+    {
+      "id": "FND-001",
+      "file": "src/main/java/com/lipari/bank/security/SecurityConfig.java",
+      "line": "30",
+      "lineStart": 30,
+      "lineEnd": 30,
+      "severity": "MEDIUM",
+      "gateSeverity": "MEDIUM",
+      "severities": [
+        "MEDIUM"
+      ],
+      "severityConflict": false,
+      "category": "security",
+      "rule": "SEC-06",
+      "issue": "L'intera area /actuator e' resa pubblica con un matcher wildcard `permitAll`.",
+      "evidence": "Oggi `management.endpoints.web.exposure.include` limita a `health,info`, ma la regola non e' vincolata a quei due path: qualunque endpoint di management reso disponibile in futuro (metrics, env, heapdump) sarebbe automaticamente raggiungibile senza autenticazione, e /actuator/info puo' esporre versione e build.",
+      "proposedFix": "Restringere a `requestMatchers(\"/actuator/health\").permitAll()` e richiedere autenticazione (o un ruolo dedicato) per tutto il resto di /actuator/**, mantenendolo coerente con `management.endpoints.web.exposure.include`. Non applicato.",
+      "reviewers": [
+        "security-reviewer"
+      ],
+      "sources": [
+        {
+          "reviewer": "security-reviewer",
+          "id": "SEC-001",
+          "severity": "MEDIUM",
+          "category": "security",
+          "rule": "SEC-06",
+          "issue": "L'intera area /actuator e' resa pubblica con un matcher wildcard `permitAll`.",
+          "evidence": "Oggi `management.endpoints.web.exposure.include` limita a `health,info`, ma la regola non e' vincolata a quei due path: qualunque endpoint di management reso disponibile in futuro (metrics, env, heapdump) sarebbe automaticamente raggiungibile senza autenticazione, e /actuator/info puo' esporre versione e build.",
+          "proposedFix": "Restringere a `requestMatchers(\"/actuator/health\").permitAll()` e richiedere autenticazione (o un ruolo dedicato) per tutto il resto di /actuator/**, mantenendolo coerente con `management.endpoints.web.exposure.include`. Non applicato."
+        }
+      ]
+    },
+    {
+      "id": "FND-002",
+      "file": "src/main/java/com/lipari/bank/security/SecurityConfig.java",
+      "line": "25-34",
+      "lineStart": 25,
+      "lineEnd": 34,
+      "severity": "MEDIUM",
+      "gateSeverity": "MEDIUM",
+      "severities": [
+        "MEDIUM"
+      ],
+      "severityConflict": false,
+      "category": "security",
+      "rule": "SEC-07",
+      "issue": "La catena di sicurezza non impone HTTPS e non emette HSTS su richieste in chiaro.",
+      "evidence": "`application.yml` espone `server.port: 8080` senza TLS e qui non c'e' alcun `requiresChannel(...).requiresSecure()`; credenziali di login e token Bearer possono viaggiare in chiaro se non c'e' un proxy che termina TLS, e HSTS non viene applicato sulle richieste HTTP.",
+      "proposedFix": "Se il TLS e' terminato a monte, documentarlo esplicitamente e configurare `server.forward-headers-strategy`; altrimenti aggiungere `.requiresChannel(c -> c.anyRequest().requiresSecure())` e abilitare HSTS con `includeSubDomains`. Non applicato.",
+      "reviewers": [
+        "security-reviewer"
+      ],
+      "sources": [
+        {
+          "reviewer": "security-reviewer",
+          "id": "SEC-002",
+          "severity": "MEDIUM",
+          "category": "security",
+          "rule": "SEC-07",
+          "issue": "La catena di sicurezza non impone HTTPS e non emette HSTS su richieste in chiaro.",
+          "evidence": "`application.yml` espone `server.port: 8080` senza TLS e qui non c'e' alcun `requiresChannel(...).requiresSecure()`; credenziali di login e token Bearer possono viaggiare in chiaro se non c'e' un proxy che termina TLS, e HSTS non viene applicato sulle richieste HTTP.",
+          "proposedFix": "Se il TLS e' terminato a monte, documentarlo esplicitamente e configurare `server.forward-headers-strategy`; altrimenti aggiungere `.requiresChannel(c -> c.anyRequest().requiresSecure())` e abilitare HSTS con `includeSubDomains`. Non applicato."
+        }
+      ]
+    },
+    {
+      "id": "FND-003",
+      "file": "src/main/java/com/lipari/bank/security/SecurityConfig.java",
+      "line": "30",
+      "lineStart": 30,
+      "lineEnd": 30,
+      "severity": "LOW",
+      "gateSeverity": "LOW",
+      "severities": [
+        "LOW"
+      ],
+      "severityConflict": false,
+      "category": "security",
+      "rule": "SEC-01",
+      "issue": "Il prefisso `/api/auth/**` e' pubblico per intero invece dei soli endpoint di autenticazione.",
+      "evidence": "Attualmente sotto /api/auth esiste solo `POST /api/auth/login`, ma ogni nuovo endpoint aggiunto nello stesso package (es. reset password, profilo, gestione utenti) diventerebbe pubblico per default senza revisione della configurazione.",
+      "proposedFix": "Elencare esplicitamente i soli path pubblici (es. `\"/api/auth/login\"`) al posto del wildcard `/api/auth/**`. Non applicato.",
+      "reviewers": [
+        "security-reviewer"
+      ],
+      "sources": [
+        {
+          "reviewer": "security-reviewer",
+          "id": "SEC-003",
+          "severity": "LOW",
+          "category": "security",
+          "rule": "SEC-01",
+          "issue": "Il prefisso `/api/auth/**` e' pubblico per intero invece dei soli endpoint di autenticazione.",
+          "evidence": "Attualmente sotto /api/auth esiste solo `POST /api/auth/login`, ma ogni nuovo endpoint aggiunto nello stesso package (es. reset password, profilo, gestione utenti) diventerebbe pubblico per default senza revisione della configurazione.",
+          "proposedFix": "Elencare esplicitamente i soli path pubblici (es. `\"/api/auth/login\"`) al posto del wildcard `/api/auth/**`. Non applicato."
+        }
+      ]
+    }
+  ]
+}

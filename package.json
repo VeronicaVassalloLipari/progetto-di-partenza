@@ -1,0 +1,11 @@
+{
+  "name": "liparibank-code-review-suite",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "review": "node --experimental-strip-types .opencode/code-review-suite.ts"
+  },
+  "dependencies": {
+    "@opencode-ai/sdk": "1.18.34"
+  }
+}

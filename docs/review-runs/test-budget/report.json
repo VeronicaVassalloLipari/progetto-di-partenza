@@ -1,0 +1,92 @@
+{
+  "schemaVersion": "1.0",
+  "run": {
+    "id": "2026-11-06T14-59-03-538Z",
+    "target": "src/main/java/com/lipari/bank/security/JwtService.java",
+    "diff": null,
+    "startedAt": "2026-11-06T14:59:03.543Z",
+    "finishedAt": "2026-11-06T14:59:08.813Z",
+    "durationMs": 5270,
+    "command": "C:\\Program Files\\nodejs\\node.exe C:\\Book progetti\\Progetto AI Agentic con Claude Code\\progetto-di-partenza\\progetto-di-partenza\\.opencode\\code-review-suite.ts src/main/java/com/lipari/bank/security/JwtService.java --reviewers security-reviewer --max-seconds 180 --max-tokens 5000 --max-cost 0 --out docs/review-runs/test-budget",
+    "model": null,
+    "failOn": "CRITICAL"
+  },
+  "outcome": "budget_exceeded",
+  "exitCode": 2,
+  "parallelism": {
+    "reviewerCount": 1,
+    "startedSessions": 1,
+    "maxStartSkewMs": 0,
+    "firstStart": "2026-11-06T14:59:04.344Z",
+    "lastStart": "2026-11-06T14:59:04.344Z",
+    "firstEnd": "2026-11-06T14:59:08.806Z",
+    "lastEnd": "2026-11-06T14:59:08.806Z",
+    "overlappingPairs": 0,
+    "totalPairs": 0,
+    "overlap": false
+  },
+  "budget": {
+    "limits": {
+      "seconds": 180,
+      "tokens": 5000,
+      "costUsd": 0
+    },
+    "used": {
+      "seconds": 5.27,
+      "tokens": 7912,
+      "providerCostUsd": 0,
+      "estimatedCostUsd": 0,
+      "effectiveCostUsd": 0
+    },
+    "status": "exceeded_tokens",
+    "exceededBy": "tokens",
+    "rates": {
+      "inputUsdPerMTok": 0,
+      "outputUsdPerMTok": 0
+    }
+  },
+  "reviewers": [
+    {
+      "reviewer": "security-reviewer",
+      "status": "budget",
+      "startedAt": "2026-11-06T14:59:04.344Z",
+      "finishedAt": "2026-11-06T14:59:08.806Z",
+      "durationMs": 4463,
+      "sessionId": "ses_e4ea12a90ffeSkzaAmNAUUlYgW",
+      "usage": {
+        "input": 7795,
+        "output": 117,
+        "reasoning": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "total": 7912,
+        "cost": 0
+      },
+      "findingsCount": 0,
+      "error": "interrotto: tokens",
+      "parseError": null,
+      "rawTextFile": "docs\\review-runs\\test-budget\\raw\\security-reviewer.txt",
+      "text": ""
+    }
+  ],
+  "summary": {
+    "findingsTotal": 0,
+    "findingsUnique": 0,
+    "duplicatesRemoved": 0,
+    "conflicts": 0,
+    "bySeverity": {
+      "CRITICAL": 0,
+      "HIGH": 0,
+      "MEDIUM": 0,
+      "LOW": 0
+    },
+    "byReviewer": [
+      {
+        "reviewer": "security-reviewer",
+        "status": "budget",
+        "findings": 0
+      }
+    ]
+  },
+  "findings": []
+}

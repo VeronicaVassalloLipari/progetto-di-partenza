@@ -1,0 +1,1073 @@
+{
+  "schemaVersion": "1.0",
+  "run": {
+    "id": "2026-11-06T15-48-26-052Z",
+    "target": "src/main/java/com/lipari/bank",
+    "diff": null,
+    "startedAt": "2026-11-06T15:48:26.055Z",
+    "finishedAt": "2026-11-06T15:50:03.543Z",
+    "durationMs": 97488,
+    "command": "C:\\Program Files\\nodejs\\node.exe C:\\Book progetti\\Progetto AI Agentic con Claude Code\\progetto-di-partenza\\progetto-di-partenza\\.opencode\\code-review-suite.ts src/main/java/com/lipari/bank --max-seconds 600 --max-tokens 500000 --max-cost 0 --out docs/review-runs/run-002",
+    "model": null,
+    "failOn": "CRITICAL"
+  },
+  "outcome": "gate_failed",
+  "exitCode": 1,
+  "parallelism": {
+    "reviewerCount": 4,
+    "startedSessions": 4,
+    "maxStartSkewMs": 2,
+    "firstStart": "2026-11-06T15:48:26.838Z",
+    "lastStart": "2026-11-06T15:48:26.840Z",
+    "firstEnd": "2026-11-06T15:49:29.054Z",
+    "lastEnd": "2026-11-06T15:50:03.530Z",
+    "overlappingPairs": 6,
+    "totalPairs": 6,
+    "overlap": true
+  },
+  "budget": {
+    "limits": {
+      "seconds": 600,
+      "tokens": 500000,
+      "costUsd": 0
+    },
+    "used": {
+      "seconds": 97.488,
+      "tokens": 402740,
+      "providerCostUsd": 0,
+      "estimatedCostUsd": 0,
+      "effectiveCostUsd": 0
+    },
+    "status": "ok",
+    "exceededBy": null,
+    "rates": {
+      "inputUsdPerMTok": 0,
+      "outputUsdPerMTok": 0
+    }
+  },
+  "reviewers": [
+    {
+      "reviewer": "movements-reviewer",
+      "status": "ok",
+      "startedAt": "2026-11-06T15:48:26.838Z",
+      "finishedAt": "2026-11-06T15:49:33.514Z",
+      "durationMs": 66680,
+      "sessionId": "ses_e4e73f698ffefQU5mt1iL0sYWE",
+      "usage": {
+        "input": 23249,
+        "output": 2663,
+        "reasoning": 4471,
+        "cacheRead": 30720,
+        "cacheWrite": 0,
+        "total": 61103,
+        "cost": 0
+      },
+      "findingsCount": 8,
+      "error": null,
+      "parseError": null,
+      "rawTextFile": "docs\\review-runs\\run-002\\raw\\movements-reviewer.txt"
+    },
+    {
+      "reviewer": "amount-compliance-reviewer",
+      "status": "ok",
+      "startedAt": "2026-11-06T15:48:26.839Z",
+      "finishedAt": "2026-11-06T15:50:03.530Z",
+      "durationMs": 96691,
+      "sessionId": "ses_e4e73f690ffe2ovKPcEeiJ2d7k",
+      "usage": {
+        "input": 17153,
+        "output": 2652,
+        "reasoning": 5596,
+        "cacheRead": 84992,
+        "cacheWrite": 0,
+        "total": 110393,
+        "cost": 0
+      },
+      "findingsCount": 5,
+      "error": null,
+      "parseError": null,
+      "rawTextFile": "docs\\review-runs\\run-002\\raw\\amount-compliance-reviewer.txt"
+    },
+    {
+      "reviewer": "api-contract-reviewer",
+      "status": "ok",
+      "startedAt": "2026-11-06T15:48:26.840Z",
+      "finishedAt": "2026-11-06T15:49:29.054Z",
+      "durationMs": 62216,
+      "sessionId": "ses_e4e73f68dffeN3kACX4K7mtZNw",
+      "usage": {
+        "input": 21904,
+        "output": 3190,
+        "reasoning": 2940,
+        "cacheRead": 98816,
+        "cacheWrite": 0,
+        "total": 126850,
+        "cost": 0
+      },
+      "findingsCount": 8,
+      "error": null,
+      "parseError": null,
+      "rawTextFile": "docs\\review-runs\\run-002\\raw\\api-contract-reviewer.txt"
+    },
+    {
+      "reviewer": "security-reviewer",
+      "status": "ok",
+      "startedAt": "2026-11-06T15:48:26.840Z",
+      "finishedAt": "2026-11-06T15:49:32.832Z",
+      "durationMs": 65993,
+      "sessionId": "ses_e4e73f68affevWli0y8KzHM2Cr",
+      "usage": {
+        "input": 19228,
+        "output": 3193,
+        "reasoning": 2741,
+        "cacheRead": 79232,
+        "cacheWrite": 0,
+        "total": 104394,
+        "cost": 0
+      },
+      "findingsCount": 7,
+      "error": null,
+      "parseError": null,
+      "rawTextFile": "docs\\review-runs\\run-002\\raw\\security-reviewer.txt"
+    }
+  ],
+  "summary": {
+    "findingsTotal": 28,
+    "findingsUnique": 27,
+    "duplicatesRemoved": 1,
+    "conflicts": 1,
+    "bySeverity": {
+      "CRITICAL": 5,
+      "HIGH": 11,
+      "MEDIUM": 9,
+      "LOW": 2
+    },
+    "byReviewer": [
+      {
+        "reviewer": "movements-reviewer",
+        "status": "ok",
+        "findings": 8
+      },
+      {
+        "reviewer": "amount-compliance-reviewer",
+        "status": "ok",
+        "findings": 5
+      },
+      {
+        "reviewer": "api-contract-reviewer",
+        "status": "ok",
+        "findings": 8
+      },
+      {
+        "reviewer": "security-reviewer",
+        "status": "ok",
+        "findings": 7
+      }
+    ]
+  },
+  "findings": [
+    {
+      "id": "FND-001",
+      "file": "src/main/java/com/lipari/bank/movement/MovementService.java",
+      "line": "29-41",
+      "lineStart": 29,
+      "lineEnd": 41,
+      "severity": "CRITICAL",
+      "gateSeverity": "CRITICAL",
+      "severities": [
+        "CRITICAL"
+      ],
+      "severityConflict": false,
+      "category": "concurrency",
+      "rule": "MOV-03",
+      "issue": "Il saldo viene letto e riscritto senza lock ne versione ottimistica, e il controllo fondi e un TOCTOU.",
+      "evidence": "`findById` restituisce l'entita senza lock/@Version; poi `from.setBalance(from.getBalance().subtract(...))` e `to.setBalance(to.getBalance().add(...))` seguono una lettura non protetta. Due trasferimenti concorrenti sullo stesso conto leggono lo stesso saldo e l'ultimo commit sovrascrive l'altro, perdendo un addebito o un accredito; il controllo `compareTo` alla riga 34 puo passare su un saldo gia consumato da un'altra transazione.",
+      "proposedFix": "Acquisire i due conti con lock pessimistico in scrittura (SELECT ... FOR UPDATE) in ordine deterministico (es. id crescente) oppure usare @Version con gestione di OptimisticLockException e retry, mantenendo il controllo fondi sotto lo stesso lock. Non applicato.",
+      "reviewers": [
+        "movements-reviewer"
+      ],
+      "sources": [
+        {
+          "reviewer": "movements-reviewer",
+          "id": "MOV-001",
+          "severity": "CRITICAL",
+          "category": "concurrency",
+          "rule": "MOV-03",
+          "issue": "Il saldo viene letto e riscritto senza lock ne versione ottimistica, e il controllo fondi e un TOCTOU.",
+          "evidence": "`findById` restituisce l'entita senza lock/@Version; poi `from.setBalance(from.getBalance().subtract(...))` e `to.setBalance(to.getBalance().add(...))` seguono una lettura non protetta. Due trasferimenti concorrenti sullo stesso conto leggono lo stesso saldo e l'ultimo commit sovrascrive l'altro, perdendo un addebito o un accredito; il controllo `compareTo` alla riga 34 puo passare su un saldo gia consumato da un'altra transazione.",
+          "proposedFix": "Acquisire i due conti con lock pessimistico in scrittura (SELECT ... FOR UPDATE) in ordine deterministico (es. id crescente) oppure usare @Version con gestione di OptimisticLockException e retry, mantenendo il controllo fondi sotto lo stesso lock. Non applicato."
+        }
+      ]
+    },
+    {
+      "id": "FND-002",
+      "file": "src/main/java/com/lipari/bank/movement/MovementService.java",
+      "line": "24-59",
+      "lineStart": 24,
+      "lineEnd": 59,
+      "severity": "HIGH",
+      "gateSeverity": "HIGH",
+      "severities": [
+        "HIGH"
+      ],
+      "severityConflict": false,
+      "category": "correctness",
+      "rule": "MOV-02",
+      "issue": "`transfer` non ha una chiave di idempotenza persistita con vincolo di unicita.",
+      "evidence": "Un retry o un doppio invio della stessa richiesta riesegue `subtract`/`add` e inserisce due nuove righe `Movement` (righe 38-39 e 43-59), duplicando sia i saldi sia i movimenti. Nessun campo della richiesta o del movimento identifica la singola operazione.",
+      "proposedFix": "Aggiungere una idempotency key fornita dal client, persistita nella stessa transazione con vincolo di unicita, e su chiave gia presente restituire il risultato originale senza riapplicare gli effetti. Non applicato.",
+      "reviewers": [
+        "movements-reviewer"
+      ],
+      "sources": [
+        {
+          "reviewer": "movements-reviewer",
+          "id": "MOV-002",
+          "severity": "HIGH",
+          "category": "correctness",
+          "rule": "MOV-02",
+          "issue": "`transfer` non ha una chiave di idempotenza persistita con vincolo di unicita.",
+          "evidence": "Un retry o un doppio invio della stessa richiesta riesegue `subtract`/`add` e inserisce due nuove righe `Movement` (righe 38-39 e 43-59), duplicando sia i saldi sia i movimenti. Nessun campo della richiesta o del movimento identifica la singola operazione.",
+          "proposedFix": "Aggiungere una idempotency key fornita dal client, persistita nella stessa transazione con vincolo di unicita, e su chiave gia presente restituire il risultato originale senza riapplicare gli effetti. Non applicato."
+        }
+      ]
+    },
+    {
+      "id": "FND-003",
+      "file": "src/main/java/com/lipari/bank/movement/Movement.java",
+      "line": "11-31",
+      "lineStart": 11,
+      "lineEnd": 31,
+      "severity": "HIGH",
+      "gateSeverity": "HIGH",
+      "severities": [
+        "HIGH"
+      ],
+      "severityConflict": false,
+      "category": "traceability",
+      "rule": "MOV-04",
+      "issue": "Le due gambe TRANSFER_OUT/TRANSFER_IN non hanno un identificativo comune dell'operazione.",
+      "evidence": "`Movement` espone solo `amount`, `counterpartyAccountId` e `description`; le righe 43-59 di MovementService collegano le due gambe solo per importo e controparte. Due trasferimenti uguali fra gli stessi conti restano indistinguibili e non riconciliabili alla stessa operazione.",
+      "proposedFix": "Introdurre un `operationId`/`transferId` comune alle due gambe (valorizzato dal servizio e persistito con vincolo per coppia/operazione) e usarlo come chiave di riconciliazione. Non applicato.",
+      "reviewers": [
+        "movements-reviewer"
+      ],
+      "sources": [
+        {
+          "reviewer": "movements-reviewer",
+          "id": "MOV-003",
+          "severity": "HIGH",
+          "category": "traceability",
+          "rule": "MOV-04",
+          "issue": "Le due gambe TRANSFER_OUT/TRANSFER_IN non hanno un identificativo comune dell'operazione.",
+          "evidence": "`Movement` espone solo `amount`, `counterpartyAccountId` e `description`; le righe 43-59 di MovementService collegano le due gambe solo per importo e controparte. Due trasferimenti uguali fra gli stessi conti restano indistinguibili e non riconciliabili alla stessa operazione.",
+          "proposedFix": "Introdurre un `operationId`/`transferId` comune alle due gambe (valorizzato dal servizio e persistito con vincolo per coppia/operazione) e usarlo come chiave di riconciliazione. Non applicato."
+        }
+      ]
+    },
+    {
+      "id": "FND-004",
+      "file": "src/main/java/com/lipari/bank/movement/MovementService.java",
+      "line": "49-58",
+      "lineStart": 49,
+      "lineEnd": 58,
+      "severity": "MEDIUM",
+      "gateSeverity": "MEDIUM",
+      "severities": [
+        "MEDIUM"
+      ],
+      "severityConflict": false,
+      "category": "correctness",
+      "rule": "MOV-05",
+      "issue": "Le due gambe ricevono `executedAt` da due chiamate distinte a `Instant.now()`.",
+      "evidence": "`out.setExecutedAt(Instant.now())` alla riga 49 e `in.setExecutedAt(Instant.now())` alla riga 58 possono produrre istanti diversi, quindi le due gambe della stessa operazione non condividono lo stesso istante di esecuzione.",
+      "proposedFix": "Calcolare un singolo `Instant executedAt = Instant.now()` prima di creare le due gambe e assegnarlo a entrambe. Non applicato.",
+      "reviewers": [
+        "movements-reviewer"
+      ],
+      "sources": [
+        {
+          "reviewer": "movements-reviewer",
+          "id": "MOV-004",
+          "severity": "MEDIUM",
+          "category": "correctness",
+          "rule": "MOV-05",
+          "issue": "Le due gambe ricevono `executedAt` da due chiamate distinte a `Instant.now()`.",
+          "evidence": "`out.setExecutedAt(Instant.now())` alla riga 49 e `in.setExecutedAt(Instant.now())` alla riga 58 possono produrre istanti diversi, quindi le due gambe della stessa operazione non condividono lo stesso istante di esecuzione.",
+          "proposedFix": "Calcolare un singolo `Instant executedAt = Instant.now()` prima di creare le due gambe e assegnarlo a entrambe. Non applicato."
+        }
+      ]
+    },
+    {
+      "id": "FND-005",
+      "file": "src/main/java/com/lipari/bank/account/AccountController.java",
+      "line": "28-30",
+      "lineStart": 28,
+      "lineEnd": 30,
+      "severity": "MEDIUM",
+      "gateSeverity": "MEDIUM",
+      "severities": [
+        "MEDIUM"
+      ],
+      "severityConflict": false,
+      "category": "correctness",
+      "rule": "MOV-07",
+      "issue": "`listAllWithMovements` esegue N+1 query sui movimenti.",
+      "evidence": "`accountRepo.findAll().stream().map(a -> ... movementRepo.findByAccountIdOrderByExecutedAtDesc(a.getId()))` lancia una query per ogni conto, con costo proporzionale al numero di conti.",
+      "proposedFix": "Recuperare i movimenti in un'unica query per l'insieme degli account id (o con join/fetch mirato) e raggrupparli in memoria. Non applicato.",
+      "reviewers": [
+        "movements-reviewer"
+      ],
+      "sources": [
+        {
+          "reviewer": "movements-reviewer",
+          "id": "MOV-005",
+          "severity": "MEDIUM",
+          "category": "correctness",
+          "rule": "MOV-07",
+          "issue": "`listAllWithMovements` esegue N+1 query sui movimenti.",
+          "evidence": "`accountRepo.findAll().stream().map(a -> ... movementRepo.findByAccountIdOrderByExecutedAtDesc(a.getId()))` lancia una query per ogni conto, con costo proporzionale al numero di conti.",
+          "proposedFix": "Recuperare i movimenti in un'unica query per l'insieme degli account id (o con join/fetch mirato) e raggrupparli in memoria. Non applicato."
+        }
+      ]
+    },
+    {
+      "id": "FND-006",
+      "file": "src/test/java/com/lipari/bank/TransferIT.java",
+      "line": "20-33",
+      "lineStart": 20,
+      "lineEnd": 33,
+      "severity": "MEDIUM",
+      "gateSeverity": "MEDIUM",
+      "severities": [
+        "MEDIUM"
+      ],
+      "severityConflict": false,
+      "category": "correctness",
+      "rule": "MOV-08",
+      "issue": "Il test copre solo il percorso felice e dipende dai saldi di seed.",
+      "evidence": "`happyPathTransfer` asserisce `900.00` e `600.00` assunti dai dati di seed; non esistono casi di conto inesistente, fondi insufficienti, verifica del rollback ne trasferimenti concorrenti, e l'isolamento dei dati non e garantito.",
+      "proposedFix": "Aggiungere test con dati creati nel test (non saldi di seed) per errori di dominio con verifica che saldi e movimenti restino invariati, per concorrenza sullo stesso conto e per il rollback. Non applicato.",
+      "reviewers": [
+        "movements-reviewer"
+      ],
+      "sources": [
+        {
+          "reviewer": "movements-reviewer",
+          "id": "MOV-006",
+          "severity": "MEDIUM",
+          "category": "correctness",
+          "rule": "MOV-08",
+          "issue": "Il test copre solo il percorso felice e dipende dai saldi di seed.",
+          "evidence": "`happyPathTransfer` asserisce `900.00` e `600.00` assunti dai dati di seed; non esistono casi di conto inesistente, fondi insufficienti, verifica del rollback ne trasferimenti concorrenti, e l'isolamento dei dati non e garantito.",
+          "proposedFix": "Aggiungere test con dati creati nel test (non saldi di seed) per errori di dominio con verifica che saldi e movimenti restino invariati, per concorrenza sullo stesso conto e per il rollback. Non applicato."
+        }
+      ]
+    },
+    {
+      "id": "FND-007",
+      "file": "src/main/java/com/lipari/bank/movement/MovementRepository.java",
+      "line": "7",
+      "lineStart": 7,
+      "lineEnd": 7,
+      "severity": "MEDIUM",
+      "gateSeverity": "MEDIUM",
+      "severities": [
+        "MEDIUM"
+      ],
+      "severityConflict": false,
+      "category": "correctness",
+      "rule": "MOV-05",
+      "issue": "L'ordinamento usa solo `executedAt` e non e deterministico in caso di parita.",
+      "evidence": "`findByAccountIdOrderByExecutedAtDesc` non prevede un criterio secondario; movimenti con lo stesso istante (in particolare le due gambe dopo l'allineamento temporale) possono cambiare ordine tra chiamate.",
+      "proposedFix": "Aggiungere un criterio di spareggio stabile, es. `OrderByExecutedAtDescIdDesc`, da usare anche per eventuali paginazioni. Non applicato.",
+      "reviewers": [
+        "movements-reviewer"
+      ],
+      "sources": [
+        {
+          "reviewer": "movements-reviewer",
+          "id": "MOV-007",
+          "severity": "MEDIUM",
+          "category": "correctness",
+          "rule": "MOV-05",
+          "issue": "L'ordinamento usa solo `executedAt` e non e deterministico in caso di parita.",
+          "evidence": "`findByAccountIdOrderByExecutedAtDesc` non prevede un criterio secondario; movimenti con lo stesso istante (in particolare le due gambe dopo l'allineamento temporale) possono cambiare ordine tra chiamate.",
+          "proposedFix": "Aggiungere un criterio di spareggio stabile, es. `OrderByExecutedAtDescIdDesc`, da usare anche per eventuali paginazioni. Non applicato."
+        }
+      ]
+    },
+    {
+      "id": "FND-008",
+      "file": "src/main/java/com/lipari/bank/movement/MovementService.java",
+      "line": "25-36",
+      "lineStart": 25,
+      "lineEnd": 36,
+      "severity": "LOW",
+      "gateSeverity": "LOW",
+      "severities": [
+        "LOW"
+      ],
+      "severityConflict": false,
+      "category": "correctness",
+      "rule": "MOV-06",
+      "issue": "Gli errori di dominio sono lanciati come `IllegalArgumentException` generica.",
+      "evidence": "Conti uguali, conto inesistente e fondi insufficienti usano tutti lo stesso tipo generico, quindi il chiamante non puo distinguere la causa ne il servizio puo differenziare il trattamento.",
+      "proposedFix": "Introdurre eccezioni di dominio dedicate (es. conto non trovato, fondi insufficienti, trasferimento non valido) e mapparle nel gestore esistente, lasciando il fallback generico. Non applicato.",
+      "reviewers": [
+        "movements-reviewer"
+      ],
+      "sources": [
+        {
+          "reviewer": "movements-reviewer",
+          "id": "MOV-008",
+          "severity": "LOW",
+          "category": "correctness",
+          "rule": "MOV-06",
+          "issue": "Gli errori di dominio sono lanciati come `IllegalArgumentException` generica.",
+          "evidence": "Conti uguali, conto inesistente e fondi insufficienti usano tutti lo stesso tipo generico, quindi il chiamante non puo distinguere la causa ne il servizio puo differenziare il trattamento.",
+          "proposedFix": "Introdurre eccezioni di dominio dedicate (es. conto non trovato, fondi insufficienti, trasferimento non valido) e mapparle nel gestore esistente, lasciando il fallback generico. Non applicato."
+        }
+      ]
+    },
+    {
+      "id": "FND-009",
+      "file": "src/main/java/com/lipari/bank/movement/MovementService.java",
+      "line": "24-61",
+      "lineStart": 24,
+      "lineEnd": 61,
+      "severity": "CRITICAL",
+      "gateSeverity": "CRITICAL",
+      "severities": [
+        "CRITICAL"
+      ],
+      "severityConflict": false,
+      "category": "compliance",
+      "rule": "AMT-07",
+      "issue": "Il trasferimento non applica alcuna soglia AML: nessuna segnalazione oltre 10.000 EUR, nessuna registrazione audit oltre 5.000 EUR, nessun alert PEP oltre 1.000 EUR.",
+      "evidence": "transfer() addebita/accredita e salva i movimenti senza confrontare l'importo con le soglie; nel codice non compare alcun riferimento a 10.000, 5.000 o 1.000, quindi un movimento fuori soglia non viene ne segnalato ne tracciato.",
+      "proposedFix": "Introdurre un componente di policy AML con le soglie 10.000 (segnalazione), 5.000 (audit) e 1.000 (PEP) EUR come costanti uniche, invocato prima del salvataggio del movimento. Non applicato.",
+      "reviewers": [
+        "amount-compliance-reviewer"
+      ],
+      "sources": [
+        {
+          "reviewer": "amount-compliance-reviewer",
+          "id": "AMT-001",
+          "severity": "CRITICAL",
+          "category": "compliance",
+          "rule": "AMT-07",
+          "issue": "Il trasferimento non applica alcuna soglia AML: nessuna segnalazione oltre 10.000 EUR, nessuna registrazione audit oltre 5.000 EUR, nessun alert PEP oltre 1.000 EUR.",
+          "evidence": "transfer() addebita/accredita e salva i movimenti senza confrontare l'importo con le soglie; nel codice non compare alcun riferimento a 10.000, 5.000 o 1.000, quindi un movimento fuori soglia non viene ne segnalato ne tracciato.",
+          "proposedFix": "Introdurre un componente di policy AML con le soglie 10.000 (segnalazione), 5.000 (audit) e 1.000 (PEP) EUR come costanti uniche, invocato prima del salvataggio del movimento. Non applicato."
+        }
+      ]
+    },
+    {
+      "id": "FND-010",
+      "file": "src/main/java/com/lipari/bank/movement/Movement.java",
+      "line": "21-30",
+      "lineStart": 21,
+      "lineEnd": 30,
+      "severity": "HIGH",
+      "gateSeverity": "HIGH",
+      "severities": [
+        "HIGH"
+      ],
+      "severityConflict": false,
+      "category": "traceability",
+      "rule": "AMT-08",
+      "issue": "Il movimento monetario non memorizza correlationId, userId, ipAddress ne valuta, quindi l'audit non e riconducibile a chi e da dove ha eseguito l'operazione.",
+      "evidence": "Movement espone solo accountId, type, amount, counterpartyAccountId, description ed executedAt; il correlationId vive solo in MDC (CorrelationIdFilter) e non viene persistito, mentre il service non valorizza utente o IP.",
+      "proposedFix": "Aggiungere a Movement, e al relativo changeSet, correlationId, userId, ipAddress e currency, valorizzandoli nel service dal contesto di sicurezza e dall'MDC. Non applicato.",
+      "reviewers": [
+        "amount-compliance-reviewer"
+      ],
+      "sources": [
+        {
+          "reviewer": "amount-compliance-reviewer",
+          "id": "AMT-002",
+          "severity": "HIGH",
+          "category": "traceability",
+          "rule": "AMT-08",
+          "issue": "Il movimento monetario non memorizza correlationId, userId, ipAddress ne valuta, quindi l'audit non e riconducibile a chi e da dove ha eseguito l'operazione.",
+          "evidence": "Movement espone solo accountId, type, amount, counterpartyAccountId, description ed executedAt; il correlationId vive solo in MDC (CorrelationIdFilter) e non viene persistito, mentre il service non valorizza utente o IP.",
+          "proposedFix": "Aggiungere a Movement, e al relativo changeSet, correlationId, userId, ipAddress e currency, valorizzandoli nel service dal contesto di sicurezza e dall'MDC. Non applicato."
+        }
+      ]
+    },
+    {
+      "id": "FND-011",
+      "file": "src/main/java/com/lipari/bank/movement/MovementService.java",
+      "line": "34-39",
+      "lineStart": 34,
+      "lineEnd": 39,
+      "severity": "HIGH",
+      "gateSeverity": "HIGH",
+      "severities": [
+        "HIGH"
+      ],
+      "severityConflict": false,
+      "category": "compliance",
+      "rule": "AMT-04",
+      "issue": "Il trasferimento somma gli importi senza verificare che i due conti abbiano la stessa valuta e il movimento non registra la valuta.",
+      "evidence": "from.getBalance() e to.getBalance() vengono aggiornati con lo stesso req.getAmount() ignorando Account.currency; con conti in valute diverse il saldo di destinazione viene incrementato come se fosse nella valuta di origine.",
+      "proposedFix": "Verificare che from.getCurrency() e to.getCurrency() coincidano e rifiutare il trasferimento in caso contrario, propagando la valuta sul Movement. Non applicato.",
+      "reviewers": [
+        "amount-compliance-reviewer"
+      ],
+      "sources": [
+        {
+          "reviewer": "amount-compliance-reviewer",
+          "id": "AMT-003",
+          "severity": "HIGH",
+          "category": "compliance",
+          "rule": "AMT-04",
+          "issue": "Il trasferimento somma gli importi senza verificare che i due conti abbiano la stessa valuta e il movimento non registra la valuta.",
+          "evidence": "from.getBalance() e to.getBalance() vengono aggiornati con lo stesso req.getAmount() ignorando Account.currency; con conti in valute diverse il saldo di destinazione viene incrementato come se fosse nella valuta di origine.",
+          "proposedFix": "Verificare che from.getCurrency() e to.getCurrency() coincidano e rifiutare il trasferimento in caso contrario, propagando la valuta sul Movement. Non applicato."
+        }
+      ]
+    },
+    {
+      "id": "FND-012",
+      "file": "src/main/java/com/lipari/bank/movement/MovementService.java",
+      "line": "38-39",
+      "lineStart": 38,
+      "lineEnd": 39,
+      "severity": "HIGH",
+      "gateSeverity": "HIGH",
+      "severities": [
+        "HIGH"
+      ],
+      "severityConflict": false,
+      "category": "correctness",
+      "rule": "AMT-02",
+      "issue": "L'importo non viene normalizzato ne validato su scale 2 prima dell'aritmetica e lo schema DECIMAL(19,2) arrotonda implicitamente in scrittura senza un RoundingMode esplicito.",
+      "evidence": "subtract/add usano il BigDecimal grezzo della richiesta; un valore con piu di due decimali (es. 10.005) supera i controlli, ma al salvataggio su balance/amount DECIMAL(19,2) viene arrotondato, rompendo la quadratura tra saldo e movimento registrato.",
+      "proposedFix": "Validare l'importo con @Digits(integer=17, fraction=2) e applicare setScale(2, RoundingMode.HALF_EVEN) una sola volta nel service prima di ogni confronto e aggiornamento, con la stessa modalita per addebito e accredito. Non applicato.",
+      "reviewers": [
+        "amount-compliance-reviewer"
+      ],
+      "sources": [
+        {
+          "reviewer": "amount-compliance-reviewer",
+          "id": "AMT-004",
+          "severity": "HIGH",
+          "category": "correctness",
+          "rule": "AMT-02",
+          "issue": "L'importo non viene normalizzato ne validato su scale 2 prima dell'aritmetica e lo schema DECIMAL(19,2) arrotonda implicitamente in scrittura senza un RoundingMode esplicito.",
+          "evidence": "subtract/add usano il BigDecimal grezzo della richiesta; un valore con piu di due decimali (es. 10.005) supera i controlli, ma al salvataggio su balance/amount DECIMAL(19,2) viene arrotondato, rompendo la quadratura tra saldo e movimento registrato.",
+          "proposedFix": "Validare l'importo con @Digits(integer=17, fraction=2) e applicare setScale(2, RoundingMode.HALF_EVEN) una sola volta nel service prima di ogni confronto e aggiornamento, con la stessa modalita per addebito e accredito. Non applicato."
+        }
+      ]
+    },
+    {
+      "id": "FND-013",
+      "file": "src/main/java/com/lipari/bank/movement/MovementService.java",
+      "line": "24-39",
+      "lineStart": 24,
+      "lineEnd": 39,
+      "severity": "MEDIUM",
+      "gateSeverity": "MEDIUM",
+      "severities": [
+        "MEDIUM"
+      ],
+      "severityConflict": false,
+      "category": "compliance",
+      "rule": "AMT-05",
+      "issue": "La positivita dell'importo e affidata solo alla validazione del DTO e non esiste alcun massimale di operazione.",
+      "evidence": "transfer() accetta qualunque BigDecimal; una chiamata diretta al service con importo negativo supera il controllo fondi (compareTo < 0 risulta falso) e decrementa il saldo di destinazione, portandolo potenzialmente sotto zero.",
+      "proposedFix": "Validare nel service amount != null e amount.signum() > 0 e definire un massimale di operazione, rifiutando i valori oltre la soglia. Non applicato.",
+      "reviewers": [
+        "amount-compliance-reviewer"
+      ],
+      "sources": [
+        {
+          "reviewer": "amount-compliance-reviewer",
+          "id": "AMT-005",
+          "severity": "MEDIUM",
+          "category": "compliance",
+          "rule": "AMT-05",
+          "issue": "La positivita dell'importo e affidata solo alla validazione del DTO e non esiste alcun massimale di operazione.",
+          "evidence": "transfer() accetta qualunque BigDecimal; una chiamata diretta al service con importo negativo supera il controllo fondi (compareTo < 0 risulta falso) e decrementa il saldo di destinazione, portandolo potenzialmente sotto zero.",
+          "proposedFix": "Validare nel service amount != null e amount.signum() > 0 e definire un massimale di operazione, rifiutando i valori oltre la soglia. Non applicato."
+        }
+      ]
+    },
+    {
+      "id": "FND-014",
+      "file": "src/main/java/com/lipari/bank/movement/MovementController.java",
+      "line": "19-22",
+      "lineStart": 19,
+      "lineEnd": 22,
+      "severity": "HIGH",
+      "gateSeverity": "HIGH",
+      "severities": [
+        "HIGH"
+      ],
+      "severityConflict": false,
+      "category": "contract",
+      "rule": "AC-01",
+      "issue": "La creazione di un trasferimento risponde 200 invece di 201.",
+      "evidence": "`POST /api/movements/transfer` ha effetti persistenti (due movimenti e due saldi aggiornati) ma restituisce `ResponseEntity.ok(...)`: un client non distingue una creazione da una lettura e non riceve semantica di risorsa creata.",
+      "proposedFix": "Restituire `ResponseEntity.status(HttpStatus.CREATED)` con il `TransferResponse` come body. Non applicato.",
+      "reviewers": [
+        "api-contract-reviewer"
+      ],
+      "sources": [
+        {
+          "reviewer": "api-contract-reviewer",
+          "id": "API-001",
+          "severity": "HIGH",
+          "category": "contract",
+          "rule": "AC-01",
+          "issue": "La creazione di un trasferimento risponde 200 invece di 201.",
+          "evidence": "`POST /api/movements/transfer` ha effetti persistenti (due movimenti e due saldi aggiornati) ma restituisce `ResponseEntity.ok(...)`: un client non distingue una creazione da una lettura e non riceve semantica di risorsa creata.",
+          "proposedFix": "Restituire `ResponseEntity.status(HttpStatus.CREATED)` con il `TransferResponse` come body. Non applicato."
+        }
+      ]
+    },
+    {
+      "id": "FND-015",
+      "file": "src/main/java/com/lipari/bank/movement/MovementController.java",
+      "line": "25-27",
+      "lineStart": 25,
+      "lineEnd": 27,
+      "severity": "HIGH",
+      "gateSeverity": "HIGH",
+      "severities": [
+        "HIGH"
+      ],
+      "severityConflict": false,
+      "category": "contract",
+      "rule": "AC-04",
+      "issue": "Le risposte espongono direttamente l'entity JPA `Movement` (e `Account` in AccountController).",
+      "evidence": "`listByAccount` restituisce `List<Movement>`; lo stesso difetto compare in `AccountController` linee 18-23 (`ResponseEntity<Account>`) e 26-33 (`AccountWithMovements(Account, List<Movement>)`). Una rinomina di colonne o campi di persistenza diventa un breaking change per il client e campi interni finiscono nel JSON.",
+      "proposedFix": "Introdurre DTO di risposta espliciti (`MovementDto`, `AccountDto`, `AccountWithMovementsDto`) con soli campi di contratto e mappare le entity al confine del controller. Non applicato.",
+      "reviewers": [
+        "api-contract-reviewer"
+      ],
+      "sources": [
+        {
+          "reviewer": "api-contract-reviewer",
+          "id": "API-002",
+          "severity": "HIGH",
+          "category": "contract",
+          "rule": "AC-04",
+          "issue": "Le risposte espongono direttamente l'entity JPA `Movement` (e `Account` in AccountController).",
+          "evidence": "`listByAccount` restituisce `List<Movement>`; lo stesso difetto compare in `AccountController` linee 18-23 (`ResponseEntity<Account>`) e 26-33 (`AccountWithMovements(Account, List<Movement>)`). Una rinomina di colonne o campi di persistenza diventa un breaking change per il client e campi interni finiscono nel JSON.",
+          "proposedFix": "Introdurre DTO di risposta espliciti (`MovementDto`, `AccountDto`, `AccountWithMovementsDto`) con soli campi di contratto e mappare le entity al confine del controller. Non applicato."
+        }
+      ]
+    },
+    {
+      "id": "FND-016",
+      "file": "src/main/java/com/lipari/bank/common/GlobalExceptionHandler.java",
+      "line": "11-33",
+      "lineStart": 11,
+      "lineEnd": 33,
+      "severity": "HIGH",
+      "gateSeverity": "HIGH",
+      "severities": [
+        "HIGH"
+      ],
+      "severityConflict": false,
+      "category": "contract",
+      "rule": "AC-03",
+      "issue": "Le violazioni di validazione non usano la forma di errore comune e non hanno un handler dedicato.",
+      "evidence": "Esiste solo un body `{timestamp,status,error,message,correlationId}` per `IllegalArgumentException`/`RuntimeException`; `MethodArgumentNotValidException` e `HttpMessageNotReadableException` ricadono nella gestione di default di Spring con struttura diversa. Lo stesso endpoint può quindi restituire due forme di errore diverse.",
+      "proposedFix": "Aggiungere handler per `MethodArgumentNotValidException` e `HttpMessageNotReadableException` che producano lo stesso `errorBody`, includendo l'elenco dei campi violati in un campo stabile. Non applicato.",
+      "reviewers": [
+        "api-contract-reviewer"
+      ],
+      "sources": [
+        {
+          "reviewer": "api-contract-reviewer",
+          "id": "API-003",
+          "severity": "HIGH",
+          "category": "contract",
+          "rule": "AC-03",
+          "issue": "Le violazioni di validazione non usano la forma di errore comune e non hanno un handler dedicato.",
+          "evidence": "Esiste solo un body `{timestamp,status,error,message,correlationId}` per `IllegalArgumentException`/`RuntimeException`; `MethodArgumentNotValidException` e `HttpMessageNotReadableException` ricadono nella gestione di default di Spring con struttura diversa. Lo stesso endpoint può quindi restituire due forme di errore diverse.",
+          "proposedFix": "Aggiungere handler per `MethodArgumentNotValidException` e `HttpMessageNotReadableException` che producano lo stesso `errorBody`, includendo l'elenco dei campi violati in un campo stabile. Non applicato."
+        }
+      ]
+    },
+    {
+      "id": "FND-017",
+      "file": "src/main/java/com/lipari/bank/web/AuthController.java",
+      "line": "20-32",
+      "lineStart": 20,
+      "lineEnd": 32,
+      "severity": "HIGH",
+      "gateSeverity": "HIGH",
+      "severities": [
+        "HIGH",
+        "MEDIUM"
+      ],
+      "severityConflict": true,
+      "category": "contract",
+      "rule": "AC-01",
+      "issue": "Login senza validazione di input e con codici/forma di errore non coerenti.",
+      "evidence": "Il body è un `Map<String,String>` senza `@Valid`: username o password assenti non danno 400. Un username inesistente fa scattare `EmptyResultDataAccessException`, intercettata dal catch-all come 500 invece di 401; il 401 usa `{\"error\":\"invalid credentials\"}`, diverso dal body degli altri errori.",
+      "proposedFix": "Introdurre `LoginRequest` con `@NotBlank`, gestire esplicitamente l'utente assente come 401 e restituire il body di errore comune anche per il 401. Non applicato.",
+      "reviewers": [
+        "api-contract-reviewer",
+        "security-reviewer"
+      ],
+      "sources": [
+        {
+          "reviewer": "api-contract-reviewer",
+          "id": "API-004",
+          "severity": "HIGH",
+          "category": "contract",
+          "rule": "AC-01",
+          "issue": "Login senza validazione di input e con codici/forma di errore non coerenti.",
+          "evidence": "Il body è un `Map<String,String>` senza `@Valid`: username o password assenti non danno 400. Un username inesistente fa scattare `EmptyResultDataAccessException`, intercettata dal catch-all come 500 invece di 401; il 401 usa `{\"error\":\"invalid credentials\"}`, diverso dal body degli altri errori.",
+          "proposedFix": "Introdurre `LoginRequest` con `@NotBlank`, gestire esplicitamente l'utente assente come 401 e restituire il body di errore comune anche per il 401. Non applicato."
+        },
+        {
+          "reviewer": "security-reviewer",
+          "id": "SEC-007",
+          "severity": "MEDIUM",
+          "category": "security",
+          "rule": "SEC-06",
+          "issue": "La login espone l'esistenza dell'username tramite comportamento diverso in caso di errore.",
+          "evidence": "`jdbc.queryForObject` solleva `EmptyResultDataAccessException` per username inesistente, gestita come 500 \"internal error\", mentre password errata su utente esistente restituisce 401: la differenza consente l'enumerazione degli utenti. Inoltre con `username` null il comportamento e' analogo.",
+          "proposedFix": "Gestire l'assenza di risultato come credenziali non valide restituendo lo stesso 401 generico per ogni caso di fallimento, senza distinguere utente inesistente da password errata. Non applicato."
+        }
+      ]
+    },
+    {
+      "id": "FND-018",
+      "file": "src/main/java/com/lipari/bank/common/GlobalExceptionHandler.java",
+      "line": "14-17",
+      "lineStart": 14,
+      "lineEnd": 17,
+      "severity": "MEDIUM",
+      "gateSeverity": "MEDIUM",
+      "severities": [
+        "MEDIUM"
+      ],
+      "severityConflict": false,
+      "category": "contract",
+      "rule": "AC-01",
+      "issue": "La risorsa assente viene mappata su 400 invece di 404.",
+      "evidence": "`IllegalArgumentException` è sempre tradotto in `BAD_REQUEST`, quindi i messaggi \"source account not found\"/\"target account not found\" del trasferimento rispondono 400, pur essendo un riferimento a risorsa inesistente.",
+      "proposedFix": "Distinguere l'eccezione di risorsa non trovata (es. dedicata) e mapparla su 404 con lo stesso `errorBody`. Non applicato.",
+      "reviewers": [
+        "api-contract-reviewer"
+      ],
+      "sources": [
+        {
+          "reviewer": "api-contract-reviewer",
+          "id": "API-005",
+          "severity": "MEDIUM",
+          "category": "contract",
+          "rule": "AC-01",
+          "issue": "La risorsa assente viene mappata su 400 invece di 404.",
+          "evidence": "`IllegalArgumentException` è sempre tradotto in `BAD_REQUEST`, quindi i messaggi \"source account not found\"/\"target account not found\" del trasferimento rispondono 400, pur essendo un riferimento a risorsa inesistente.",
+          "proposedFix": "Distinguere l'eccezione di risorsa non trovata (es. dedicata) e mapparla su 404 con lo stesso `errorBody`. Non applicato."
+        }
+      ]
+    },
+    {
+      "id": "FND-019",
+      "file": "src/main/java/com/lipari/bank/movement/dto/TransferRequest.java",
+      "line": "10-20",
+      "lineStart": 10,
+      "lineEnd": 20,
+      "severity": "MEDIUM",
+      "gateSeverity": "MEDIUM",
+      "severities": [
+        "MEDIUM"
+      ],
+      "severityConflict": false,
+      "category": "contract",
+      "rule": "AC-02",
+      "issue": "I vincoli di validazione non coprono lo schema del database.",
+      "evidence": "`description` non ha `@Size(max = 255)` mentre `movement.description` è `VARCHAR(255)`; `amount` non ha `@Digits(integer = 17, fraction = 2)` mentre la colonna è `DECIMAL(19,2)`. Input oltre soglia arriva al DB e produce un 500 generico invece di un 400 di validazione; inoltre il messaggio \"amount must be > 0\" non corrisponde alla soglia `0.01`.",
+      "proposedFix": "Aggiungere `@Size(max = 255)` su `description`, `@Digits(integer = 17, fraction = 2)` su `amount` e allineare il messaggio alla soglia reale. Non applicato.",
+      "reviewers": [
+        "api-contract-reviewer"
+      ],
+      "sources": [
+        {
+          "reviewer": "api-contract-reviewer",
+          "id": "API-006",
+          "severity": "MEDIUM",
+          "category": "contract",
+          "rule": "AC-02",
+          "issue": "I vincoli di validazione non coprono lo schema del database.",
+          "evidence": "`description` non ha `@Size(max = 255)` mentre `movement.description` è `VARCHAR(255)`; `amount` non ha `@Digits(integer = 17, fraction = 2)` mentre la colonna è `DECIMAL(19,2)`. Input oltre soglia arriva al DB e produce un 500 generico invece di un 400 di validazione; inoltre il messaggio \"amount must be > 0\" non corrisponde alla soglia `0.01`.",
+          "proposedFix": "Aggiungere `@Size(max = 255)` su `description`, `@Digits(integer = 17, fraction = 2)` su `amount` e allineare il messaggio alla soglia reale. Non applicato."
+        }
+      ]
+    },
+    {
+      "id": "FND-020",
+      "file": "src/main/java/com/lipari/bank/movement/MovementController.java",
+      "line": "25-27",
+      "lineStart": 25,
+      "lineEnd": 27,
+      "severity": "MEDIUM",
+      "gateSeverity": "MEDIUM",
+      "severities": [
+        "MEDIUM"
+      ],
+      "severityConflict": false,
+      "category": "contract",
+      "rule": "AC-08",
+      "issue": "Le liste non hanno paginazione ne limite dichiarato.",
+      "evidence": "`GET /api/movements` restituisce tutti i movimenti del conto e `GET /api/accounts/with-movements` (AccountController linee 26-33) tutti i conti con tutti i movimenti: il payload cresce senza limite e il contratto non espone `page`/`size` ne un default.",
+      "proposedFix": "Accettare parametri di paginazione con limiti espliciti e restituire una struttura con contenuto e metadati di pagina, dichiarandoli nel contratto. Non applicato.",
+      "reviewers": [
+        "api-contract-reviewer"
+      ],
+      "sources": [
+        {
+          "reviewer": "api-contract-reviewer",
+          "id": "API-007",
+          "severity": "MEDIUM",
+          "category": "contract",
+          "rule": "AC-08",
+          "issue": "Le liste non hanno paginazione ne limite dichiarato.",
+          "evidence": "`GET /api/movements` restituisce tutti i movimenti del conto e `GET /api/accounts/with-movements` (AccountController linee 26-33) tutti i conti con tutti i movimenti: il payload cresce senza limite e il contratto non espone `page`/`size` ne un default.",
+          "proposedFix": "Accettare parametri di paginazione con limiti espliciti e restituire una struttura con contenuto e metadati di pagina, dichiarandoli nel contratto. Non applicato."
+        }
+      ]
+    },
+    {
+      "id": "FND-021",
+      "file": "pom.xml",
+      "line": "27-100",
+      "lineStart": 27,
+      "lineEnd": 100,
+      "severity": "LOW",
+      "gateSeverity": "LOW",
+      "severities": [
+        "LOW"
+      ],
+      "severityConflict": false,
+      "category": "contract",
+      "rule": "AC-05",
+      "issue": "Mancano schema OpenAPI e test HTTP di contratto.",
+      "evidence": "Non c'è dipendenza springdoc ne file OpenAPI; l'unico test (`TransferIT`) invoca `MovementService` direttamente, senza MockMvc su percorsi, verbi, codici e forma degli errori.",
+      "proposedFix": "Aggiungere la generazione OpenAPI degli endpoint e test MockMvc su 201/400/401/404 e sulla struttura JSON degli errori. Non applicato.",
+      "reviewers": [
+        "api-contract-reviewer"
+      ],
+      "sources": [
+        {
+          "reviewer": "api-contract-reviewer",
+          "id": "API-008",
+          "severity": "LOW",
+          "category": "contract",
+          "rule": "AC-05",
+          "issue": "Mancano schema OpenAPI e test HTTP di contratto.",
+          "evidence": "Non c'è dipendenza springdoc ne file OpenAPI; l'unico test (`TransferIT`) invoca `MovementService` direttamente, senza MockMvc su percorsi, verbi, codici e forma degli errori.",
+          "proposedFix": "Aggiungere la generazione OpenAPI degli endpoint e test MockMvc su 201/400/401/404 e sulla struttura JSON degli errori. Non applicato."
+        }
+      ]
+    },
+    {
+      "id": "FND-022",
+      "file": "src/main/java/com/lipari/bank/account/AccountController.java",
+      "line": "18-31",
+      "lineStart": 18,
+      "lineEnd": 31,
+      "severity": "CRITICAL",
+      "gateSeverity": "CRITICAL",
+      "severities": [
+        "CRITICAL"
+      ],
+      "severityConflict": false,
+      "category": "security",
+      "rule": "SEC-01",
+      "issue": "Gli endpoint dei conti non verificano che la risorsa appartenga al chiamante autenticato.",
+      "evidence": "`getAccount(@PathVariable Long id)` restituisce qualsiasi conto dato l'id e `listAllWithMovements()` restituisce tutti i conti con i movimenti; l'id arriva dal client e non c'e' alcun confronto tra `Account.customerId` e il principal. E' un IDOR che espone IBAN, saldo e movimenti di terzi a qualunque utente autenticato.",
+      "proposedFix": "Derivare il customer dall'utente autenticato e verificare la proprieta' lato server prima di restituire il conto; per la lista limitare ai conti del chiamante o richiedere un ruolo esplicito. Non applicato.",
+      "reviewers": [
+        "security-reviewer"
+      ],
+      "sources": [
+        {
+          "reviewer": "security-reviewer",
+          "id": "SEC-001",
+          "severity": "CRITICAL",
+          "category": "security",
+          "rule": "SEC-01",
+          "issue": "Gli endpoint dei conti non verificano che la risorsa appartenga al chiamante autenticato.",
+          "evidence": "`getAccount(@PathVariable Long id)` restituisce qualsiasi conto dato l'id e `listAllWithMovements()` restituisce tutti i conti con i movimenti; l'id arriva dal client e non c'e' alcun confronto tra `Account.customerId` e il principal. E' un IDOR che espone IBAN, saldo e movimenti di terzi a qualunque utente autenticato.",
+          "proposedFix": "Derivare il customer dall'utente autenticato e verificare la proprieta' lato server prima di restituire il conto; per la lista limitare ai conti del chiamante o richiedere un ruolo esplicito. Non applicato."
+        }
+      ]
+    },
+    {
+      "id": "FND-023",
+      "file": "src/main/java/com/lipari/bank/movement/MovementController.java",
+      "line": "19-28",
+      "lineStart": 19,
+      "lineEnd": 28,
+      "severity": "CRITICAL",
+      "gateSeverity": "CRITICAL",
+      "severities": [
+        "CRITICAL"
+      ],
+      "severityConflict": false,
+      "category": "security",
+      "rule": "SEC-01",
+      "issue": "Trasferimenti e lista movimenti non verificano la proprieta' del conto rispetto al chiamante.",
+      "evidence": "`transfer` accetta `fromAccountId` dal body e addebita quel conto senza controllare che appartenga all'utente autenticato, permettendo di muovere denaro da conti altrui; `listByAccount(@RequestParam Long accountId)` espone i movimenti di qualunque conto. L'id e' usato come prova di autorizzazione.",
+      "proposedFix": "Verificare lato server che `fromAccountId` (e i conti letti) siano riconducibili al principal prima di eseguire l'operazione, e restituire 403/404 in caso contrario. Non applicato.",
+      "reviewers": [
+        "security-reviewer"
+      ],
+      "sources": [
+        {
+          "reviewer": "security-reviewer",
+          "id": "SEC-002",
+          "severity": "CRITICAL",
+          "category": "security",
+          "rule": "SEC-01",
+          "issue": "Trasferimenti e lista movimenti non verificano la proprieta' del conto rispetto al chiamante.",
+          "evidence": "`transfer` accetta `fromAccountId` dal body e addebita quel conto senza controllare che appartenga all'utente autenticato, permettendo di muovere denaro da conti altrui; `listByAccount(@RequestParam Long accountId)` espone i movimenti di qualunque conto. L'id e' usato come prova di autorizzazione.",
+          "proposedFix": "Verificare lato server che `fromAccountId` (e i conti letti) siano riconducibili al principal prima di eseguire l'operazione, e restituire 403/404 in caso contrario. Non applicato."
+        }
+      ]
+    },
+    {
+      "id": "FND-024",
+      "file": "src/main/java/com/lipari/bank/security/JwtService.java",
+      "line": "13",
+      "lineStart": 13,
+      "lineEnd": 13,
+      "severity": "CRITICAL",
+      "gateSeverity": "CRITICAL",
+      "severities": [
+        "CRITICAL"
+      ],
+      "severityConflict": false,
+      "category": "security",
+      "rule": "SEC-02",
+      "issue": "La chiave di firma JWT e' una costante hardcoded nel codice versionato.",
+      "evidence": "`SECRET = \"demo-jwt-secret-for-bootcamp-banking-system-must-be-long-enough\"` e' nel sorgente; chiunque abbia accesso al repository puo' forgiare token validi per qualsiasi `username`, ottenendo impersonazione e bypass dell'autenticazione.",
+      "proposedFix": "Caricare la chiave da variabile d'ambiente o secret manager, con valore lungo e casuale per ambiente, e prevedere rotazione. Non applicato.",
+      "reviewers": [
+        "security-reviewer"
+      ],
+      "sources": [
+        {
+          "reviewer": "security-reviewer",
+          "id": "SEC-003",
+          "severity": "CRITICAL",
+          "category": "security",
+          "rule": "SEC-02",
+          "issue": "La chiave di firma JWT e' una costante hardcoded nel codice versionato.",
+          "evidence": "`SECRET = \"demo-jwt-secret-for-bootcamp-banking-system-must-be-long-enough\"` e' nel sorgente; chiunque abbia accesso al repository puo' forgiare token validi per qualsiasi `username`, ottenendo impersonazione e bypass dell'autenticazione.",
+          "proposedFix": "Caricare la chiave da variabile d'ambiente o secret manager, con valore lungo e casuale per ambiente, e prevedere rotazione. Non applicato."
+        }
+      ]
+    },
+    {
+      "id": "FND-025",
+      "file": "src/main/resources/application.yml",
+      "line": "5-7",
+      "lineStart": 5,
+      "lineEnd": 7,
+      "severity": "HIGH",
+      "gateSeverity": "HIGH",
+      "severities": [
+        "HIGH"
+      ],
+      "severityConflict": false,
+      "category": "security",
+      "rule": "SEC-02",
+      "issue": "Credenziali del database in chiaro nella configurazione versionata.",
+      "evidence": "`username: lipariuser` e `password: liparipassword` sono committati; chi legge il repository ottiene accesso diretto al DB. Inoltre `useSSL=false` nella JDBC URL lascia il traffico DB non cifrato.",
+      "proposedFix": "Spostare le credenziali su variabili d'ambiente/secret manager, abilitare TLS verso il DB e usare un utente applicativo con privilegi minimi. Non applicato.",
+      "reviewers": [
+        "security-reviewer"
+      ],
+      "sources": [
+        {
+          "reviewer": "security-reviewer",
+          "id": "SEC-004",
+          "severity": "HIGH",
+          "category": "security",
+          "rule": "SEC-02",
+          "issue": "Credenziali del database in chiaro nella configurazione versionata.",
+          "evidence": "`username: lipariuser` e `password: liparipassword` sono committati; chi legge il repository ottiene accesso diretto al DB. Inoltre `useSSL=false` nella JDBC URL lascia il traffico DB non cifrato.",
+          "proposedFix": "Spostare le credenziali su variabili d'ambiente/secret manager, abilitare TLS verso il DB e usare un utente applicativo con privilegi minimi. Non applicato."
+        }
+      ]
+    },
+    {
+      "id": "FND-026",
+      "file": "src/main/resources/db/changelog/001-base-schema.yaml",
+      "line": "75-78",
+      "lineStart": 75,
+      "lineEnd": 78,
+      "severity": "HIGH",
+      "gateSeverity": "HIGH",
+      "severities": [
+        "HIGH"
+      ],
+      "severityConflict": false,
+      "category": "security",
+      "rule": "SEC-08",
+      "issue": "Credenziali di default e relativi hash sono versionati nel changelog.",
+      "evidence": "Il commento dichiara le password in chiaro (`alice123`, `bob123`) e inserisce gli hash BCrypt corrispondenti: sono credenziali note e fisse, utilizzabili per accedere agli ambienti che eseguono questo seed.",
+      "proposedFix": "Rimuovere il seed delle credenziali dal changelog di produzione e fornire gli utenti demo solo in profili di test, con password generate e non documentate nel repository. Non applicato.",
+      "reviewers": [
+        "security-reviewer"
+      ],
+      "sources": [
+        {
+          "reviewer": "security-reviewer",
+          "id": "SEC-005",
+          "severity": "HIGH",
+          "category": "security",
+          "rule": "SEC-08",
+          "issue": "Credenziali di default e relativi hash sono versionati nel changelog.",
+          "evidence": "Il commento dichiara le password in chiaro (`alice123`, `bob123`) e inserisce gli hash BCrypt corrispondenti: sono credenziali note e fisse, utilizzabili per accedere agli ambienti che eseguono questo seed.",
+          "proposedFix": "Rimuovere il seed delle credenziali dal changelog di produzione e fornire gli utenti demo solo in profili di test, con password generate e non documentate nel repository. Non applicato."
+        }
+      ]
+    },
+    {
+      "id": "FND-027",
+      "file": "src/main/java/com/lipari/bank/security/JwtService.java",
+      "line": "21-37",
+      "lineStart": 21,
+      "lineEnd": 37,
+      "severity": "MEDIUM",
+      "gateSeverity": "MEDIUM",
+      "severities": [
+        "MEDIUM"
+      ],
+      "severityConflict": false,
+      "category": "security",
+      "rule": "SEC-03",
+      "issue": "I token non vincolano issuer/audience e non esiste revoca o rotazione.",
+      "evidence": "`generate`/`parseUsername` non impostano ne' verificano `iss`/`aud` e non c'e' meccanismo di revoca: un token resta valido fino a `exp` (1 ora) anche dopo un cambio password o la disattivazione dell'utente.",
+      "proposedFix": "Impostare e validare issuer e audience attesi e introdurre una strategia di revoca/rotazione (es. token version o blacklist) coerente con i requisiti. Non applicato.",
+      "reviewers": [
+        "security-reviewer"
+      ],
+      "sources": [
+        {
+          "reviewer": "security-reviewer",
+          "id": "SEC-006",
+          "severity": "MEDIUM",
+          "category": "security",
+          "rule": "SEC-03",
+          "issue": "I token non vincolano issuer/audience e non esiste revoca o rotazione.",
+          "evidence": "`generate`/`parseUsername` non impostano ne' verificano `iss`/`aud` e non c'e' meccanismo di revoca: un token resta valido fino a `exp` (1 ora) anche dopo un cambio password o la disattivazione dell'utente.",
+          "proposedFix": "Impostare e validare issuer e audience attesi e introdurre una strategia di revoca/rotazione (es. token version o blacklist) coerente con i requisiti. Non applicato."
+        }
+      ]
+    }
+  ]
+}

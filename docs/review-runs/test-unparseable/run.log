@@ -1,0 +1,6 @@
+[2026-11-06T15:02:34.480Z] RUN 2026-11-06T15-02-34-479Z target=src/main/java/com/lipari/bank/security/SecurityConfig.java diff=- reviewers=_test-unparseable
+[2026-11-06T15:02:34.481Z] BUDGET seconds=120 tokens=60000 costUsd=unlimited
+[2026-11-06T15:02:35.266Z] SERVER http://127.0.0.1:4096
+[2026-11-06T15:02:35.272Z] START _test-unparseable
+[2026-11-06T15:02:42.297Z] END _test-unparseable status=unparseable findings=0 tokens=6065 cost=0
+[2026-11-06T15:02:42.381Z] REPORT docs\review-runs\test-unparseable\report.md exit=3 findings=0 tokens=6065 cost=0

@@ -1,6 +1,9 @@
 # Uscita di compilazione Maven
 target/
 
+# Dipendenze Node della suite (l'SDK e' gia' fornito da OpenCode)
+node_modules/
+
 # Configurazione locale dei CLI: contiene credenziali, non si committa
 .claude/settings.local.json
 .opencode/opencode.local.json

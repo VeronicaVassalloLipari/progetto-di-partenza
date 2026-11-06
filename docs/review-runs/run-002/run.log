@@ -1,0 +1,12 @@
+[2026-11-06T15:48:26.054Z] RUN 2026-11-06T15-48-26-052Z target=src/main/java/com/lipari/bank diff=- reviewers=movements-reviewer,amount-compliance-reviewer,api-contract-reviewer,security-reviewer
+[2026-11-06T15:48:26.054Z] BUDGET seconds=600 tokens=500000 costUsd=unlimited
+[2026-11-06T15:48:26.832Z] SERVER http://127.0.0.1:4096
+[2026-11-06T15:48:26.838Z] START movements-reviewer
+[2026-11-06T15:48:26.839Z] START amount-compliance-reviewer
+[2026-11-06T15:48:26.840Z] START api-contract-reviewer
+[2026-11-06T15:48:26.840Z] START security-reviewer
+[2026-11-06T15:49:29.054Z] END api-contract-reviewer status=ok findings=8 tokens=126850 cost=0
+[2026-11-06T15:49:32.832Z] END security-reviewer status=ok findings=7 tokens=104394 cost=0
+[2026-11-06T15:49:33.514Z] END movements-reviewer status=ok findings=8 tokens=61103 cost=0
+[2026-11-06T15:50:03.530Z] END amount-compliance-reviewer status=ok findings=5 tokens=110393 cost=0
+[2026-11-06T15:50:03.558Z] REPORT docs\review-runs\run-002\report.md exit=1 findings=27 tokens=402740 cost=0

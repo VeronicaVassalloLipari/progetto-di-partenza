@@ -1,0 +1,56 @@
+```
+REVIEW: amount-compliance
+TARGET: src/main/java/com/lipari/bank
+VERDICT: CHANGES_REQUIRED
+
+FINDINGS:
+- id: AMT-001
+  file: src/main/java/com/lipari/bank/movement/MovementService.java
+  line: 24-61
+  severity: CRITICAL
+  category: compliance
+  rule: AMT-07
+  issue: Il trasferimento non applica alcuna soglia AML: nessuna segnalazione oltre 10.000 EUR, nessuna registrazione audit oltre 5.000 EUR, nessun alert PEP oltre 1.000 EUR.
+  evidence: transfer() addebita/accredita e salva i movimenti senza confrontare l'importo con le soglie; nel codice non compare alcun riferimento a 10.000, 5.000 o 1.000, quindi un movimento fuori soglia non viene ne segnalato ne tracciato.
+  proposed_fix: Introdurre un componente di policy AML con le soglie 10.000 (segnalazione), 5.000 (audit) e 1.000 (PEP) EUR come costanti uniche, invocato prima del salvataggio del movimento. Non applicato.
+
+- id: AMT-002
+  file: src/main/java/com/lipari/bank/movement/Movement.java
+  line: 21-30
+  severity: HIGH
+  category: traceability
+  rule: AMT-08
+  issue: Il movimento monetario non memorizza correlationId, userId, ipAddress ne valuta, quindi l'audit non e riconducibile a chi e da dove ha eseguito l'operazione.
+  evidence: Movement espone solo accountId, type, amount, counterpartyAccountId, description ed executedAt; il correlationId vive solo in MDC (CorrelationIdFilter) e non viene persistito, mentre il service non valorizza utente o IP.
+  proposed_fix: Aggiungere a Movement, e al relativo changeSet, correlationId, userId, ipAddress e currency, valorizzandoli nel service dal contesto di sicurezza e dall'MDC. Non applicato.
+
+- id: AMT-003
+  file: src/main/java/com/lipari/bank/movement/MovementService.java
+  line: 34-39
+  severity: HIGH
+  category: compliance
+  rule: AMT-04
+  issue: Il trasferimento somma gli importi senza verificare che i due conti abbiano la stessa valuta e il movimento non registra la valuta.
+  evidence: from.getBalance() e to.getBalance() vengono aggiornati con lo stesso req.getAmount() ignorando Account.currency; con conti in valute diverse il saldo di destinazione viene incrementato come se fosse nella valuta di origine.
+  proposed_fix: Verificare che from.getCurrency() e to.getCurrency() coincidano e rifiutare il trasferimento in caso contrario, propagando la valuta sul Movement. Non applicato.
+
+- id: AMT-004
+  file: src/main/java/com/lipari/bank/movement/MovementService.java
+  line: 38-39
+  severity: HIGH
+  category: correctness
+  rule: AMT-02
+  issue: L'importo non viene normalizzato ne validato su scale 2 prima dell'aritmetica e lo schema DECIMAL(19,2) arrotonda implicitamente in scrittura senza un RoundingMode esplicito.
+  evidence: subtract/add usano il BigDecimal grezzo della richiesta; un valore con piu di due decimali (es. 10.005) supera i controlli, ma al salvataggio su balance/amount DECIMAL(19,2) viene arrotondato, rompendo la quadratura tra saldo e movimento registrato.
+  proposed_fix: Validare l'importo con @Digits(integer=17, fraction=2) e applicare setScale(2, RoundingMode.HALF_EVEN) una sola volta nel service prima di ogni confronto e aggiornamento, con la stessa modalita per addebito e accredito. Non applicato.
+
+- id: AMT-005
+  file: src/main/java/com/lipari/bank/movement/MovementService.java
+  line: 24-39
+  severity: MEDIUM
+  category: compliance
+  rule: AMT-05
+  issue: La positivita dell'importo e affidata solo alla validazione del DTO e non esiste alcun massimale di operazione.
+  evidence: transfer() accetta qualunque BigDecimal; una chiamata diretta al service con importo negativo supera il controllo fondi (compareTo < 0 risulta falso) e decrementa il saldo di destinazione, portandolo potenzialmente sotto zero.
+  proposed_fix: Validare nel service amount != null e amount.signum() > 0 e definire un massimale di operazione, rifiutando i valori oltre la soglia. Non applicato.
+```

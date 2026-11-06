@@ -1,0 +1,66 @@
+```
+REVIEW: amount-compliance
+TARGET: src/main/java/com/lipari/bank
+VERDICT: CHANGES_REQUIRED
+
+FINDINGS:
+- id: AMT-001
+  file: src/main/java/com/lipari/bank/movement/Movement.java
+  line: 21-22
+  severity: CRITICAL
+  category: compliance
+  rule: AMT-04
+  issue: Il movimento registra l'importo senza la valuta; lo schema `movement` non ha la colonna `currency`.
+  evidence: `amount DECIMAL(19,2)` e nessun campo valuta: non e ricostruibile in quale valuta sia avvenuto l'addebito o l'accredito, quindi l'audit monetario previsto dalla policy resta incompleto.
+  proposed_fix: Aggiungere `currency` (VARCHAR(3), non null) a `Movement` e al changelog `003-movement`, valorizzandola dalla valuta del conto alla creazione del movimento. Non applicato.
+
+- id: AMT-002
+  file: src/main/java/com/lipari/bank/movement/MovementService.java
+  line: 34-41
+  severity: HIGH
+  category: correctness
+  rule: AMT-04
+  issue: Il trasferimento somma e sottrae gli importi senza verificare che i due conti abbiano la stessa valuta.
+  evidence: `from.getBalance().subtract(req.getAmount())` e `to.getBalance().add(req.getAmount())` avvengono 1:1; con conti in valute diverse (il campo `Account.currency` esiste) si accredita lo stesso numero senza conversione.
+  proposed_fix: Confrontare `from.getCurrency()` e `to.getCurrency()` e rifiutare il trasferimento se diverse, oppure applicare un cambio esplicito e tracciato. Non applicato.
+
+- id: AMT-003
+  file: src/main/java/com/lipari/bank/movement/MovementService.java
+  line: 34-59
+  severity: HIGH
+  category: compliance
+  rule: AMT-07
+  issue: Nessun controllo delle soglie AML: i movimenti oltre 10.000 EUR non sono segnalati e quelli oltre 5.000 EUR non sono registrati nell'audit.
+  evidence: Il service esegue il trasferimento senza confrontare `req.getAmount()` con le soglie 10.000 e 5.000 della policy; tali valori non compaiono in nessun punto del codice.
+  proposed_fix: Introdurre le soglie come costanti uniche (10.000 per la segnalazione, 5.000 per l'audit) e applicarle durante la registrazione del movimento. Non applicato.
+
+- id: AMT-004
+  file: src/main/java/com/lipari/bank/movement/Movement.java
+  line: 29-30
+  severity: HIGH
+  category: traceability
+  rule: AMT-08
+  issue: Il movimento non persiste `correlationId`, `userId` e `ipAddress`; l'audit monetario richiesto non e completo.
+  evidence: `Movement` conserva solo `executedAt` e l'importo; il `correlationId` presente nell'MDC non viene salvato e utente/IP non sono raccolti, quindi non e possibile ricostruire chi ha eseguito il movimento e da dove.
+  proposed_fix: Aggiungere `correlationId`, `userId` e `ipAddress` a `Movement` (e al changelog) e valorizzarli in `MovementService` da MDC, sicurezza e richiesta. Non applicato.
+
+- id: AMT-005
+  file: src/main/java/com/lipari/bank/movement/MovementService.java
+  line: 38-39
+  severity: MEDIUM
+  category: correctness
+  rule: AMT-03
+  issue: L'importo non viene normalizzato a scale 2 con un `RoundingMode` esplicito prima del calcolo e della persistenza.
+  evidence: `req.getAmount()` puo avere piu di 2 decimali; viene sottratto o aggiunto al saldo e poi salvato su `DECIMAL(19,2)`, dove l'arrotondamento implicito del DB puo differire dall'importo usato nel calcolo (es. 10,004 movimenta 10,00).
+  proposed_fix: Validare o normalizzare l'importo con `setScale(2, RoundingMode.HALF_UP)` (in alternativa rifiutare scale maggiori di 2) in un unico punto, con lo stesso `RoundingMode` per addebito e accredito. Non applicato.
+
+- id: AMT-006
+  file: src/main/java/com/lipari/bank/movement/MovementService.java
+  line: 24-38
+  severity: MEDIUM
+  category: compliance
+  rule: AMT-05
+  issue: Il service non impone un massimale di operazione ne rivalida che l'importo sia strettamente positivo.
+  evidence: La sola validazione `@DecimalMin("0.01")` sta nel DTO e si applica solo via controller; una chiamata diretta a `transfer(...)` con importo zero, negativo o arbitrariamente grande non viene fermata.
+  proposed_fix: Aggiungere in `MovementService` un controllo `amount > 0` e un massimale di operazione come costante esplicita, lanciando un errore di dominio. Non applicato.
+```

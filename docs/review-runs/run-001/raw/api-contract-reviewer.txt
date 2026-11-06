@@ -1,0 +1,86 @@
+```
+REVIEW: api-contract
+TARGET: src/main/java/com/lipari/bank
+VERDICT: CHANGES_REQUIRED
+
+FINDINGS:
+- id: API-001
+  file: src/main/java/com/lipari/bank/movement/MovementController.java
+  line: 26-28
+  severity: HIGH
+  category: contract
+  rule: AC-04
+  issue: Le risposte espongono direttamente entity JPA (`Movement`, `Account`) invece di DTO espliciti.
+  evidence: `GET /api/movements` restituisce `List<Movement>`; `AccountController.getAccount` restituisce `Account` (righe 19-22) e `AccountWithMovements` (riga 33) incapsula `Account` e `List<Movement>`. Una rinomina o un cambio di tipo sul lato persistenza diventa un breaking change non dichiarato per il client, e campi interni (`accountId`, `counterpartyAccountId`, `customerId`) finiscono nel payload.
+  proposed_fix: Introdurre DTO di risposta dedicati (es. `MovementResponse`, `AccountResponse`, `AccountWithMovementsResponse`) e mappare le entity nei controller o in un mapper. Non applicato.
+
+- id: API-002
+  file: src/main/java/com/lipari/bank/movement/MovementController.java
+  line: 21
+  severity: HIGH
+  category: contract
+  rule: AC-01
+  issue: `POST /api/movements/transfer` risponde 200 invece di 201 per una creazione con effetti.
+  evidence: `ResponseEntity.ok(movementService.transfer(req))` restituisce 200 OK su un'operazione che crea due movimenti e modifica i saldi; il contratto richiede 201 per una creazione.
+  proposed_fix: Restituire `ResponseEntity.status(HttpStatus.CREATED).body(...)` (eventualmente con header `Location` sul movimento creato). Non applicato.
+
+- id: API-003
+  file: src/main/java/com/lipari/bank/common/GlobalExceptionHandler.java
+  line: 14-17
+  severity: HIGH
+  category: contract
+  rule: AC-01
+  issue: Il conto inesistente restituisce 400 invece di 404.
+  evidence: `MovementService.transfer` lancia `IllegalArgumentException("source account not found")` / `"target account not found"`, mappate indistintamente a `HttpStatus.BAD_REQUEST`. Il client non distingue un payload malformato da una risorsa assente.
+  proposed_fix: Introdurre un'eccezione dedicata (es. `NotFoundException`) mappata a 404 con lo stesso error body, lasciando `IllegalArgumentException` per gli input non validi. Non applicato.
+
+- id: API-004
+  file: src/main/java/com/lipari/bank/common/GlobalExceptionHandler.java
+  line: 14-33
+  severity: HIGH
+  category: contract
+  rule: AC-03
+  issue: Le violazioni di validazione e gli errori di tipo non producono la forma di errore comune.
+  evidence: `@Valid` su `TransferRequest` genera `MethodArgumentNotValidException` e `/api/movements?accountId=abc` genera `MethodArgumentTypeMismatchException`: nessuno dei due e gestito, quindi rispondono con il body di default di Spring, diverso da `errorBody(...)`. Inoltre `AccountController` restituisce 404 con body vuoto (`ResponseEntity.notFound().build()`). Lo stesso endpoint espone quindi forme di errore diverse.
+  proposed_fix: Aggiungere handler per `MethodArgumentNotValidException` (con elenco campi/messaggi), `MethodArgumentTypeMismatchException` e `MissingServletRequestParameterException`, tutti convogliati su `errorBody(...)`; far restituire il body di errore anche al 404 di `AccountController`. Non applicato.
+
+- id: API-005
+  file: src/main/java/com/lipari/bank/web/AuthController.java
+  line: 21-33
+  severity: HIGH
+  category: contract
+  rule: AC-01
+  issue: Il login usa una `Map` senza validazione e risponde 500 su utente inesistente invece di 401.
+  evidence: Con username non presente, `jdbc.queryForObject(...)` lancia `EmptyResultDataAccessException`, catturata da `handleGeneric` come 500; con `username`/`password` assenti dal body si ottiene lo stesso 500. Il 401 usa inoltre `Map.of("error", ...)`, forma diversa da `errorBody(...)` sullo stesso endpoint.
+  proposed_fix: Introdurre un `LoginRequest` con `@NotBlank`, gestire l'utente assente come 401 (o `Optional`/query tollerante) e restituire sempre la forma di errore comune. Non applicato.
+
+- id: API-006
+  file: src/main/java/com/lipari/bank/movement/dto/TransferRequest.java
+  line: 17-20
+  severity: MEDIUM
+  category: contract
+  rule: AC-02
+  issue: Le annotazioni non sono allineate allo schema del database per `description` e `amount`.
+  evidence: `description` mappa su `VARCHAR(255)` ma non ha `@Size(max = 255)`: un valore piu lungo arriva al database e produce un 500 invece di un 400. `amount` mappa su `DECIMAL(19,2)` ma non ha `@Digits(integer = 17, fraction = 2)`: valori con piu di due decimali vengono accettati e arrotondati in persistenza, con risposta incoerente rispetto a quanto salvato.
+  proposed_fix: Aggiungere `@Size(max = 255)` su `description` e `@Digits(integer = 17, fraction = 2)` su `amount`, con messaggi coerenti ai vincoli. Non applicato.
+
+- id: API-007
+  file: src/main/java/com/lipari/bank/movement/MovementController.java
+  line: 26-28
+  severity: MEDIUM
+  category: contract
+  rule: AC-08
+  issue: Le liste non dichiarano paginazione ne limite, e `GET /api/accounts/with-movements` restituisce tutti i conti.
+  evidence: `GET /api/movements` e `GET /api/accounts/with-movements` (`AccountController` righe 27-31) restituiscono l'intero insieme senza parametri `page`/`size` ne tetto massimo; il payload cresce senza controllo e il contratto non dichiara ordinamento se non nel nome del metodo del repository.
+  proposed_fix: Introdurre parametri di paginazione con default e massimo espliciti, restituire una struttura con metadati (contenuto, pagina, totale) e dichiarare l'ordinamento nel contratto. Non applicato.
+
+- id: API-008
+  file: src/test/java/com/lipari/bank/TransferIT.java
+  line: 14-33
+  severity: LOW
+  category: traceability
+  rule: AC-05
+  issue: Mancano schema OpenAPI e test HTTP di contratto su percorsi, codici e forma degli errori.
+  evidence: Non esiste alcun file OpenAPI nel repository e l'unico test (`TransferIT`) invoca `MovementService` direttamente: nessuna copertura MockMvc per i codici 201/400/401/404 ne per la forma dell'error body.
+  proposed_fix: Aggiungere lo schema OpenAPI degli endpoint esposti e test MockMvc che verifichino percorso, verbo, codice di stato e struttura JSON degli errori. Non applicato.
+```

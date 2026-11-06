@@ -1,0 +1,38 @@
+```
+REVIEW: security
+TARGET: src/main/java/com/lipari/bank/security/SecurityConfig.java
+VERDICT: CHANGES_REQUIRED
+
+FINDINGS:
+- id: SEC-001
+  file: src/main/java/com/lipari/bank/security/SecurityConfig.java
+  line: 30
+  severity: MEDIUM
+  category: security
+  rule: SEC-06
+  issue: L'intera area /actuator e' resa pubblica con un matcher wildcard `permitAll`.
+  evidence: Oggi `management.endpoints.web.exposure.include` limita a `health,info`, ma la regola non e' vincolata a quei due path: qualunque endpoint di management reso disponibile in futuro (metrics, env, heapdump) sarebbe automaticamente raggiungibile senza autenticazione, e /actuator/info puo' esporre versione e build.
+  proposed_fix: Restringere a `requestMatchers("/actuator/health").permitAll()` e richiedere autenticazione (o un ruolo dedicato) per tutto il resto di /actuator/**, mantenendolo coerente con `management.endpoints.web.exposure.include`. Non applicato.
+
+- id: SEC-002
+  file: src/main/java/com/lipari/bank/security/SecurityConfig.java
+  line: 25-34
+  severity: MEDIUM
+  category: security
+  rule: SEC-07
+  issue: La catena di sicurezza non impone HTTPS e non emette HSTS su richieste in chiaro.
+  evidence: `application.yml` espone `server.port: 8080` senza TLS e qui non c'e' alcun `requiresChannel(...).requiresSecure()`; credenziali di login e token Bearer possono viaggiare in chiaro se non c'e' un proxy che termina TLS, e HSTS non viene applicato sulle richieste HTTP.
+  proposed_fix: Se il TLS e' terminato a monte, documentarlo esplicitamente e configurare `server.forward-headers-strategy`; altrimenti aggiungere `.requiresChannel(c -> c.anyRequest().requiresSecure())` e abilitare HSTS con `includeSubDomains`. Non applicato.
+
+- id: SEC-003
+  file: src/main/java/com/lipari/bank/security/SecurityConfig.java
+  line: 30
+  severity: LOW
+  category: security
+  rule: SEC-01
+  issue: Il prefisso `/api/auth/**` e' pubblico per intero invece dei soli endpoint di autenticazione.
+  evidence: Attualmente sotto /api/auth esiste solo `POST /api/auth/login`, ma ogni nuovo endpoint aggiunto nello stesso package (es. reset password, profilo, gestione utenti) diventerebbe pubblico per default senza revisione della configurazione.
+  proposed_fix: Elencare esplicitamente i soli path pubblici (es. `"/api/auth/login"`) al posto del wildcard `/api/auth/**`. Non applicato.
+
+NOTES: Fuori target ma in perimetro di sicurezza: segreto JWT hardcoded in `JwtService.java:13`, da spostare su variabile d'ambiente o secret manager.
+```

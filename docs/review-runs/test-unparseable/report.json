@@ -1,0 +1,92 @@
+{
+  "schemaVersion": "1.0",
+  "run": {
+    "id": "2026-11-06T15-02-34-479Z",
+    "target": "src/main/java/com/lipari/bank/security/SecurityConfig.java",
+    "diff": null,
+    "startedAt": "2026-11-06T15:02:34.482Z",
+    "finishedAt": "2026-11-06T15:02:42.313Z",
+    "durationMs": 7831,
+    "command": "C:\\Program Files\\nodejs\\node.exe C:\\Book progetti\\Progetto AI Agentic con Claude Code\\progetto-di-partenza\\progetto-di-partenza\\.opencode\\code-review-suite.ts src/main/java/com/lipari/bank/security/SecurityConfig.java --reviewers _test-unparseable --max-seconds 120 --max-tokens 60000 --max-cost 0 --out docs/review-runs/test-unparseable",
+    "model": null,
+    "failOn": "CRITICAL"
+  },
+  "outcome": "reviewer_failed",
+  "exitCode": 3,
+  "parallelism": {
+    "reviewerCount": 1,
+    "startedSessions": 1,
+    "maxStartSkewMs": 0,
+    "firstStart": "2026-11-06T15:02:35.272Z",
+    "lastStart": "2026-11-06T15:02:35.272Z",
+    "firstEnd": "2026-11-06T15:02:42.297Z",
+    "lastEnd": "2026-11-06T15:02:42.297Z",
+    "overlappingPairs": 0,
+    "totalPairs": 0,
+    "overlap": false
+  },
+  "budget": {
+    "limits": {
+      "seconds": 120,
+      "tokens": 60000,
+      "costUsd": 0
+    },
+    "used": {
+      "seconds": 7.831,
+      "tokens": 6065,
+      "providerCostUsd": 0,
+      "estimatedCostUsd": 0,
+      "effectiveCostUsd": 0
+    },
+    "status": "ok",
+    "exceededBy": null,
+    "rates": {
+      "inputUsdPerMTok": 0,
+      "outputUsdPerMTok": 0
+    }
+  },
+  "reviewers": [
+    {
+      "reviewer": "_test-unparseable",
+      "status": "unparseable",
+      "startedAt": "2026-11-06T15:02:35.272Z",
+      "finishedAt": "2026-11-06T15:02:42.297Z",
+      "durationMs": 7028,
+      "sessionId": "ses_e4e9df2a8ffeH8f5wQFxXZB5za",
+      "usage": {
+        "input": 5726,
+        "output": 15,
+        "reasoning": 324,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "total": 6065,
+        "cost": 0
+      },
+      "findingsCount": 0,
+      "error": null,
+      "parseError": "blocco FINDINGS non riconoscibile",
+      "rawTextFile": "docs\\review-runs\\test-unparseable\\raw\\_test-unparseable.txt",
+      "text": "questo output non rispetta il formato richiesto."
+    }
+  ],
+  "summary": {
+    "findingsTotal": 0,
+    "findingsUnique": 0,
+    "duplicatesRemoved": 0,
+    "conflicts": 0,
+    "bySeverity": {
+      "CRITICAL": 0,
+      "HIGH": 0,
+      "MEDIUM": 0,
+      "LOW": 0
+    },
+    "byReviewer": [
+      {
+        "reviewer": "_test-unparseable",
+        "status": "unparseable",
+        "findings": 0
+      }
+    ]
+  },
+  "findings": []
+}

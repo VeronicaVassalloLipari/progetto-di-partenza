@@ -1,0 +1,78 @@
+```
+REVIEW: security
+TARGET: src/main/java/com/lipari/bank
+VERDICT: CHANGES_REQUIRED
+
+FINDINGS:
+- id: SEC-001
+  file: src/main/java/com/lipari/bank/account/AccountController.java
+  line: 18-31
+  severity: CRITICAL
+  category: security
+  rule: SEC-01
+  issue: Gli endpoint dei conti non verificano che la risorsa appartenga al chiamante autenticato.
+  evidence: `getAccount(@PathVariable Long id)` restituisce qualsiasi conto dato l'id e `listAllWithMovements()` restituisce tutti i conti con i movimenti; l'id arriva dal client e non c'e' alcun confronto tra `Account.customerId` e il principal. E' un IDOR che espone IBAN, saldo e movimenti di terzi a qualunque utente autenticato.
+  proposed_fix: Derivare il customer dall'utente autenticato e verificare la proprieta' lato server prima di restituire il conto; per la lista limitare ai conti del chiamante o richiedere un ruolo esplicito. Non applicato.
+
+- id: SEC-002
+  file: src/main/java/com/lipari/bank/movement/MovementController.java
+  line: 19-28
+  severity: CRITICAL
+  category: security
+  rule: SEC-01
+  issue: Trasferimenti e lista movimenti non verificano la proprieta' del conto rispetto al chiamante.
+  evidence: `transfer` accetta `fromAccountId` dal body e addebita quel conto senza controllare che appartenga all'utente autenticato, permettendo di muovere denaro da conti altrui; `listByAccount(@RequestParam Long accountId)` espone i movimenti di qualunque conto. L'id e' usato come prova di autorizzazione.
+  proposed_fix: Verificare lato server che `fromAccountId` (e i conti letti) siano riconducibili al principal prima di eseguire l'operazione, e restituire 403/404 in caso contrario. Non applicato.
+
+- id: SEC-003
+  file: src/main/java/com/lipari/bank/security/JwtService.java
+  line: 13
+  severity: CRITICAL
+  category: security
+  rule: SEC-02
+  issue: La chiave di firma JWT e' una costante hardcoded nel codice versionato.
+  evidence: `SECRET = "demo-jwt-secret-for-bootcamp-banking-system-must-be-long-enough"` e' nel sorgente; chiunque abbia accesso al repository puo' forgiare token validi per qualsiasi `username`, ottenendo impersonazione e bypass dell'autenticazione.
+  proposed_fix: Caricare la chiave da variabile d'ambiente o secret manager, con valore lungo e casuale per ambiente, e prevedere rotazione. Non applicato.
+
+- id: SEC-004
+  file: src/main/resources/application.yml
+  line: 5-7
+  severity: HIGH
+  category: security
+  rule: SEC-02
+  issue: Credenziali del database in chiaro nella configurazione versionata.
+  evidence: `username: lipariuser` e `password: liparipassword` sono committati; chi legge il repository ottiene accesso diretto al DB. Inoltre `useSSL=false` nella JDBC URL lascia il traffico DB non cifrato.
+  proposed_fix: Spostare le credenziali su variabili d'ambiente/secret manager, abilitare TLS verso il DB e usare un utente applicativo con privilegi minimi. Non applicato.
+
+- id: SEC-005
+  file: src/main/resources/db/changelog/001-base-schema.yaml
+  line: 75-78
+  severity: HIGH
+  category: security
+  rule: SEC-08
+  issue: Credenziali di default e relativi hash sono versionati nel changelog.
+  evidence: Il commento dichiara le password in chiaro (`alice123`, `bob123`) e inserisce gli hash BCrypt corrispondenti: sono credenziali note e fisse, utilizzabili per accedere agli ambienti che eseguono questo seed.
+  proposed_fix: Rimuovere il seed delle credenziali dal changelog di produzione e fornire gli utenti demo solo in profili di test, con password generate e non documentate nel repository. Non applicato.
+
+- id: SEC-006
+  file: src/main/java/com/lipari/bank/security/JwtService.java
+  line: 21-37
+  severity: MEDIUM
+  category: security
+  rule: SEC-03
+  issue: I token non vincolano issuer/audience e non esiste revoca o rotazione.
+  evidence: `generate`/`parseUsername` non impostano ne' verificano `iss`/`aud` e non c'e' meccanismo di revoca: un token resta valido fino a `exp` (1 ora) anche dopo un cambio password o la disattivazione dell'utente.
+  proposed_fix: Impostare e validare issuer e audience attesi e introdurre una strategia di revoca/rotazione (es. token version o blacklist) coerente con i requisiti. Non applicato.
+
+- id: SEC-007
+  file: src/main/java/com/lipari/bank/web/AuthController.java
+  line: 25-31
+  severity: MEDIUM
+  category: security
+  rule: SEC-06
+  issue: La login espone l'esistenza dell'username tramite comportamento diverso in caso di errore.
+  evidence: `jdbc.queryForObject` solleva `EmptyResultDataAccessException` per username inesistente, gestita come 500 "internal error", mentre password errata su utente esistente restituisce 401: la differenza consente l'enumerazione degli utenti. Inoltre con `username` null il comportamento e' analogo.
+  proposed_fix: Gestire l'assenza di risultato come credenziali non valide restituendo lo stesso 401 generico per ogni caso di fallimento, senza distinguere utente inesistente da password errata. Non applicato.
+
+NOTES: Il token con `List.of()` come authorities e' coerente con l'uso esclusivo di `authenticated()`, ma non esiste alcuna autorizzazione per ruolo; da valutare insieme ai controlli di proprieta' di SEC-001/SEC-002.
+```

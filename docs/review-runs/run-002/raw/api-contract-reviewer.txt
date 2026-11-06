@@ -1,0 +1,86 @@
+```
+REVIEW: api-contract
+TARGET: src/main/java/com/lipari/bank
+VERDICT: CHANGES_REQUIRED
+
+FINDINGS:
+- id: API-001
+  file: src/main/java/com/lipari/bank/movement/MovementController.java
+  line: 19-22
+  severity: HIGH
+  category: contract
+  rule: AC-01
+  issue: La creazione di un trasferimento risponde 200 invece di 201.
+  evidence: `POST /api/movements/transfer` ha effetti persistenti (due movimenti e due saldi aggiornati) ma restituisce `ResponseEntity.ok(...)`: un client non distingue una creazione da una lettura e non riceve semantica di risorsa creata.
+  proposed_fix: Restituire `ResponseEntity.status(HttpStatus.CREATED)` con il `TransferResponse` come body. Non applicato.
+
+- id: API-002
+  file: src/main/java/com/lipari/bank/movement/MovementController.java
+  line: 25-27
+  severity: HIGH
+  category: contract
+  rule: AC-04
+  issue: Le risposte espongono direttamente l'entity JPA `Movement` (e `Account` in AccountController).
+  evidence: `listByAccount` restituisce `List<Movement>`; lo stesso difetto compare in `AccountController` linee 18-23 (`ResponseEntity<Account>`) e 26-33 (`AccountWithMovements(Account, List<Movement>)`). Una rinomina di colonne o campi di persistenza diventa un breaking change per il client e campi interni finiscono nel JSON.
+  proposed_fix: Introdurre DTO di risposta espliciti (`MovementDto`, `AccountDto`, `AccountWithMovementsDto`) con soli campi di contratto e mappare le entity al confine del controller. Non applicato.
+
+- id: API-003
+  file: src/main/java/com/lipari/bank/common/GlobalExceptionHandler.java
+  line: 11-33
+  severity: HIGH
+  category: contract
+  rule: AC-03
+  issue: Le violazioni di validazione non usano la forma di errore comune e non hanno un handler dedicato.
+  evidence: Esiste solo un body `{timestamp,status,error,message,correlationId}` per `IllegalArgumentException`/`RuntimeException`; `MethodArgumentNotValidException` e `HttpMessageNotReadableException` ricadono nella gestione di default di Spring con struttura diversa. Lo stesso endpoint può quindi restituire due forme di errore diverse.
+  proposed_fix: Aggiungere handler per `MethodArgumentNotValidException` e `HttpMessageNotReadableException` che producano lo stesso `errorBody`, includendo l'elenco dei campi violati in un campo stabile. Non applicato.
+
+- id: API-004
+  file: src/main/java/com/lipari/bank/web/AuthController.java
+  line: 20-32
+  severity: HIGH
+  category: contract
+  rule: AC-01
+  issue: Login senza validazione di input e con codici/forma di errore non coerenti.
+  evidence: Il body è un `Map<String,String>` senza `@Valid`: username o password assenti non danno 400. Un username inesistente fa scattare `EmptyResultDataAccessException`, intercettata dal catch-all come 500 invece di 401; il 401 usa `{"error":"invalid credentials"}`, diverso dal body degli altri errori.
+  proposed_fix: Introdurre `LoginRequest` con `@NotBlank`, gestire esplicitamente l'utente assente come 401 e restituire il body di errore comune anche per il 401. Non applicato.
+
+- id: API-005
+  file: src/main/java/com/lipari/bank/common/GlobalExceptionHandler.java
+  line: 14-17
+  severity: MEDIUM
+  category: contract
+  rule: AC-01
+  issue: La risorsa assente viene mappata su 400 invece di 404.
+  evidence: `IllegalArgumentException` è sempre tradotto in `BAD_REQUEST`, quindi i messaggi "source account not found"/"target account not found" del trasferimento rispondono 400, pur essendo un riferimento a risorsa inesistente.
+  proposed_fix: Distinguere l'eccezione di risorsa non trovata (es. dedicata) e mapparla su 404 con lo stesso `errorBody`. Non applicato.
+
+- id: API-006
+  file: src/main/java/com/lipari/bank/movement/dto/TransferRequest.java
+  line: 10-20
+  severity: MEDIUM
+  category: contract
+  rule: AC-02
+  issue: I vincoli di validazione non coprono lo schema del database.
+  evidence: `description` non ha `@Size(max = 255)` mentre `movement.description` è `VARCHAR(255)`; `amount` non ha `@Digits(integer = 17, fraction = 2)` mentre la colonna è `DECIMAL(19,2)`. Input oltre soglia arriva al DB e produce un 500 generico invece di un 400 di validazione; inoltre il messaggio "amount must be > 0" non corrisponde alla soglia `0.01`.
+  proposed_fix: Aggiungere `@Size(max = 255)` su `description`, `@Digits(integer = 17, fraction = 2)` su `amount` e allineare il messaggio alla soglia reale. Non applicato.
+
+- id: API-007
+  file: src/main/java/com/lipari/bank/movement/MovementController.java
+  line: 25-27
+  severity: MEDIUM
+  category: contract
+  rule: AC-08
+  issue: Le liste non hanno paginazione ne limite dichiarato.
+  evidence: `GET /api/movements` restituisce tutti i movimenti del conto e `GET /api/accounts/with-movements` (AccountController linee 26-33) tutti i conti con tutti i movimenti: il payload cresce senza limite e il contratto non espone `page`/`size` ne un default.
+  proposed_fix: Accettare parametri di paginazione con limiti espliciti e restituire una struttura con contenuto e metadati di pagina, dichiarandoli nel contratto. Non applicato.
+
+- id: API-008
+  file: pom.xml
+  line: 27-100
+  severity: LOW
+  category: contract
+  rule: AC-05
+  issue: Mancano schema OpenAPI e test HTTP di contratto.
+  evidence: Non c'è dipendenza springdoc ne file OpenAPI; l'unico test (`TransferIT`) invoca `MovementService` direttamente, senza MockMvc su percorsi, verbi, codici e forma degli errori.
+  proposed_fix: Aggiungere la generazione OpenAPI degli endpoint e test MockMvc su 201/400/401/404 e sulla struttura JSON degli errori. Non applicato.
+```

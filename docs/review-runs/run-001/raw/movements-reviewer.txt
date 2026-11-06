@@ -1,0 +1,88 @@
+```
+REVIEW: movements
+TARGET: src/main/java/com/lipari/bank (+ src/test/java/com/lipari/bank/TransferIT.java)
+VERDICT: CHANGES_REQUIRED
+
+FINDINGS:
+- id: MOV-001
+  file: src/main/java/com/lipari/bank/movement/MovementService.java
+  line: 29-41
+  severity: CRITICAL
+  category: concurrency
+  rule: MOV-03
+  issue: Il saldo dei due conti viene letto, controllato e riscritto senza lock pessimistico ne versione ottimistica.
+  evidence: from/to sono caricati con findById e poi modificati con setBalance; Account non ha alcun campo @Version. Due trasferimenti concorrenti sullo stesso conto leggono lo stesso saldo e l'ultimo commit sovrascrive l'altro (lost update); il controllo fondi alla riga 34 e un TOCTOU rispetto alla scrittura alla riga 38. L'ordine di caricamento segue gli id della request, quindi un futuro lock non deterministico esporrebbe anche a deadlock incrociati.
+  proposed_fix: Acquisire i due conti in un ordine deterministico (es. id crescente) con lock pessimistico (SELECT ... FOR UPDATE) oppure introdurre @Version su Account e gestire OptimisticLockException, mantenendo controllo fondi e addebito dentro lo stesso confine transazionale. Non applicato.
+
+- id: MOV-002
+  file: src/main/java/com/lipari/bank/movement/MovementService.java
+  line: 23-61
+  severity: HIGH
+  category: correctness
+  rule: MOV-02
+  issue: Il trasferimento non ha alcuna chiave di idempotenza persistita con vincolo di unicita.
+  evidence: Ogni invocazione crea due Movement e riscrive i saldi senza verificare se la stessa richiesta e gia stata eseguita; un retry del client dopo un timeout duplica movimenti e spostamento di denaro. La tabella movement (001-base-schema.yaml) non ha colonne ne indici per una idempotency key.
+  proposed_fix: Aggiungere una chiave di idempotenza fornita dal client (es. requestId/Idempotency-Key), persistita su una colonna con vincolo UNIQUE e verificata all'inizio del metodo, restituendo l'esito della prima esecuzione in caso di replay. Non applicato.
+
+- id: MOV-003
+  file: src/main/java/com/lipari/bank/movement/MovementService.java
+  line: 43-59
+  severity: HIGH
+  category: traceability
+  rule: MOV-04
+  issue: Le due gambe TRANSFER_OUT/TRANSFER_IN non condividono alcun identificativo di operazione.
+  evidence: out e in sono due entita indipendenti legate solo da amount, counterparty e description; Movement non ha un campo transferId/operationId e la risposta espone solo out.getId(). Due trasferimenti con stesso importo e stessa controparte non sono distinguibili ne ricostruibili in modo affidabile.
+  proposed_fix: Introdurre un identificativo comune dell'operazione (es. colonna transfer_id/operation_id su movement, valorizzata con lo stesso valore su entrambe le gambe, con indice) e usarlo anche come transferId restituito. Non applicato.
+
+- id: MOV-004
+  file: src/main/java/com/lipari/bank/movement/MovementService.java
+  line: 49
+  severity: MEDIUM
+  category: correctness
+  rule: MOV-05
+  issue: Le due gambe ricevono due Instant.now() distinti invece dello stesso istante di esecuzione.
+  evidence: out.setExecutedAt(Instant.now()) alla riga 49 e in.setExecutedAt(Instant.now()) alla riga 58 producono timestamp diversi per la stessa operazione, rendendo incoerente la ricostruzione temporale della coppia.
+  proposed_fix: Calcolare un unico Instant all'inizio del trasferimento e assegnarlo a entrambe le gambe. Non applicato.
+
+- id: MOV-005
+  file: src/main/java/com/lipari/bank/movement/MovementRepository.java
+  line: 7
+  severity: MEDIUM
+  category: correctness
+  rule: MOV-05
+  issue: L'ordinamento per soli executedAt non e deterministico in caso di timestamp uguali.
+  evidence: findByAccountIdOrderByExecutedAtDesc non ha un criterio di spareggio; gambe della stessa operazione o movimenti nello stesso millisecondo possono cambiare ordine tra due letture. L'indice idx_movement_account_executed_at non include id.
+  proposed_fix: Aggiungere un tie-break stabile (es. OrderByExecutedAtDescIdDesc) e valutare l'estensione dell'indice con id. Non applicato.
+
+- id: MOV-006
+  file: src/main/java/com/lipari/bank/account/AccountController.java
+  line: 27-31
+  severity: MEDIUM
+  category: correctness
+  rule: MOV-07
+  issue: La lista conti con movimenti esegue una query per ogni conto (N+1).
+  evidence: accountRepo.findAll() seguito da movementRepo.findByAccountIdOrderByExecutedAtDesc(a.getId()) dentro la map genera N+1 select e carica l'intera storia dei movimenti per ogni conto, senza limite.
+  proposed_fix: Recuperare i movimenti con una sola query (es. findByAccountIdInOrderBy... o join fetch) e raggrupparli in memoria, applicando un limite/paginazione ai movimenti recenti. Non applicato.
+
+- id: MOV-007
+  file: src/test/java/com/lipari/bank/TransferIT.java
+  line: 20-33
+  severity: MEDIUM
+  category: correctness
+  rule: MOV-08
+  issue: L'unico test copre il solo happy path, dipende dai saldi di seed e non isola i dati.
+  evidence: il test usa gli account 1 e 2 e asserisce 900.00/600.00, valori derivati dal seed Liquibase (1000.00/500.00); non c'e rollback ne reset, quindi una seconda esecuzione parte da saldi gia modificati. Mancano casi di errore (fondi insufficienti, conto inesistente, stesso conto), verifica del rollback, concorrenza e isolamento; @ActiveProfiles("test") non ha un application-test.yml, quindi punta al database di sviluppo.
+  proposed_fix: Rendere il test @Transactional o creare i dati nel test, aggiungere casi di errore con verifica di saldi e movimenti invariati, un test concorrente e una configurazione test dedicata (DB isolato). Non applicato.
+
+- id: MOV-008
+  file: src/main/java/com/lipari/bank/movement/MovementService.java
+  line: 25-35
+  severity: LOW
+  category: correctness
+  rule: MOV-06
+  issue: Gli errori di dominio sono espressi con IllegalArgumentException generica anziche eccezioni tipizzate.
+  evidence: stesso conto, conto inesistente e fondi insufficienti lanciano IllegalArgumentException con messaggi testuali; il mapping 4xx oggi funziona, ma service e handler sono accoppiati solo per tipo generico e chiamate interne senza @Valid possono degradare a NPE/500.
+  proposed_fix: Introdurre eccezioni di dominio dedicate (es. AccountNotFoundException, InsufficientFundsException, SameAccountException) mappate su 4xx e validare gli input anche nel service. Non applicato.
+
+NOTES: MOV-01 risulta rispettato: tutte le scritture sono dentro @Transactional e le eccezioni lanciate sono RuntimeException, quindi il rollback avviene.
+```

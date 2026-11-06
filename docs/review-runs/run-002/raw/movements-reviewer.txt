@@ -1,0 +1,84 @@
+REVIEW: movements
+TARGET: src/main/java/com/lipari/bank (package review)
+VERDICT: CHANGES_REQUIRED
+
+FINDINGS:
+- id: MOV-001
+  file: src/main/java/com/lipari/bank/movement/MovementService.java
+  line: 29-41
+  severity: CRITICAL
+  category: concurrency
+  rule: MOV-03
+  issue: Il saldo viene letto e riscritto senza lock ne versione ottimistica, e il controllo fondi e un TOCTOU.
+  evidence: `findById` restituisce l'entita senza lock/@Version; poi `from.setBalance(from.getBalance().subtract(...))` e `to.setBalance(to.getBalance().add(...))` seguono una lettura non protetta. Due trasferimenti concorrenti sullo stesso conto leggono lo stesso saldo e l'ultimo commit sovrascrive l'altro, perdendo un addebito o un accredito; il controllo `compareTo` alla riga 34 puo passare su un saldo gia consumato da un'altra transazione.
+  proposed_fix: Acquisire i due conti con lock pessimistico in scrittura (SELECT ... FOR UPDATE) in ordine deterministico (es. id crescente) oppure usare @Version con gestione di OptimisticLockException e retry, mantenendo il controllo fondi sotto lo stesso lock. Non applicato.
+
+- id: MOV-002
+  file: src/main/java/com/lipari/bank/movement/MovementService.java
+  line: 24-59
+  severity: HIGH
+  category: correctness
+  rule: MOV-02
+  issue: `transfer` non ha una chiave di idempotenza persistita con vincolo di unicita.
+  evidence: Un retry o un doppio invio della stessa richiesta riesegue `subtract`/`add` e inserisce due nuove righe `Movement` (righe 38-39 e 43-59), duplicando sia i saldi sia i movimenti. Nessun campo della richiesta o del movimento identifica la singola operazione.
+  proposed_fix: Aggiungere una idempotency key fornita dal client, persistita nella stessa transazione con vincolo di unicita, e su chiave gia presente restituire il risultato originale senza riapplicare gli effetti. Non applicato.
+
+- id: MOV-003
+  file: src/main/java/com/lipari/bank/movement/Movement.java
+  line: 11-31
+  severity: HIGH
+  category: traceability
+  rule: MOV-04
+  issue: Le due gambe TRANSFER_OUT/TRANSFER_IN non hanno un identificativo comune dell'operazione.
+  evidence: `Movement` espone solo `amount`, `counterpartyAccountId` e `description`; le righe 43-59 di MovementService collegano le due gambe solo per importo e controparte. Due trasferimenti uguali fra gli stessi conti restano indistinguibili e non riconciliabili alla stessa operazione.
+  proposed_fix: Introdurre un `operationId`/`transferId` comune alle due gambe (valorizzato dal servizio e persistito con vincolo per coppia/operazione) e usarlo come chiave di riconciliazione. Non applicato.
+
+- id: MOV-004
+  file: src/main/java/com/lipari/bank/movement/MovementService.java
+  line: 49-58
+  severity: MEDIUM
+  category: correctness
+  rule: MOV-05
+  issue: Le due gambe ricevono `executedAt` da due chiamate distinte a `Instant.now()`.
+  evidence: `out.setExecutedAt(Instant.now())` alla riga 49 e `in.setExecutedAt(Instant.now())` alla riga 58 possono produrre istanti diversi, quindi le due gambe della stessa operazione non condividono lo stesso istante di esecuzione.
+  proposed_fix: Calcolare un singolo `Instant executedAt = Instant.now()` prima di creare le due gambe e assegnarlo a entrambe. Non applicato.
+
+- id: MOV-005
+  file: src/main/java/com/lipari/bank/account/AccountController.java
+  line: 28-30
+  severity: MEDIUM
+  category: correctness
+  rule: MOV-07
+  issue: `listAllWithMovements` esegue N+1 query sui movimenti.
+  evidence: `accountRepo.findAll().stream().map(a -> ... movementRepo.findByAccountIdOrderByExecutedAtDesc(a.getId()))` lancia una query per ogni conto, con costo proporzionale al numero di conti.
+  proposed_fix: Recuperare i movimenti in un'unica query per l'insieme degli account id (o con join/fetch mirato) e raggrupparli in memoria. Non applicato.
+
+- id: MOV-006
+  file: src/test/java/com/lipari/bank/TransferIT.java
+  line: 20-33
+  severity: MEDIUM
+  category: correctness
+  rule: MOV-08
+  issue: Il test copre solo il percorso felice e dipende dai saldi di seed.
+  evidence: `happyPathTransfer` asserisce `900.00` e `600.00` assunti dai dati di seed; non esistono casi di conto inesistente, fondi insufficienti, verifica del rollback ne trasferimenti concorrenti, e l'isolamento dei dati non e garantito.
+  proposed_fix: Aggiungere test con dati creati nel test (non saldi di seed) per errori di dominio con verifica che saldi e movimenti restino invariati, per concorrenza sullo stesso conto e per il rollback. Non applicato.
+
+- id: MOV-007
+  file: src/main/java/com/lipari/bank/movement/MovementRepository.java
+  line: 7
+  severity: MEDIUM
+  category: correctness
+  rule: MOV-05
+  issue: L'ordinamento usa solo `executedAt` e non e deterministico in caso di parita.
+  evidence: `findByAccountIdOrderByExecutedAtDesc` non prevede un criterio secondario; movimenti con lo stesso istante (in particolare le due gambe dopo l'allineamento temporale) possono cambiare ordine tra chiamate.
+  proposed_fix: Aggiungere un criterio di spareggio stabile, es. `OrderByExecutedAtDescIdDesc`, da usare anche per eventuali paginazioni. Non applicato.
+
+- id: MOV-008
+  file: src/main/java/com/lipari/bank/movement/MovementService.java
+  line: 25-36
+  severity: LOW
+  category: correctness
+  rule: MOV-06
+  issue: Gli errori di dominio sono lanciati come `IllegalArgumentException` generica.
+  evidence: Conti uguali, conto inesistente e fondi insufficienti usano tutti lo stesso tipo generico, quindi il chiamante non puo distinguere la causa ne il servizio puo differenziare il trattamento.
+  proposed_fix: Introdurre eccezioni di dominio dedicate (es. conto non trovato, fondi insufficienti, trasferimento non valido) e mapparle nel gestore esistente, lasciando il fallback generico. Non applicato.

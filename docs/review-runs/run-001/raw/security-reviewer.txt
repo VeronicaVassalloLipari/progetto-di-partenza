@@ -1,0 +1,88 @@
+```
+REVIEW: security
+TARGET: src/main/java/com/lipari/bank
+VERDICT: CHANGES_REQUIRED
+
+FINDINGS:
+- id: SEC-001
+  file: src/main/java/com/lipari/bank/security/JwtService.java
+  line: 12-18
+  severity: CRITICAL
+  category: security
+  rule: SEC-02
+  issue: La chiave di firma JWT e' una costante in chiaro nel codice versionato.
+  evidence: Chiunque legga il repository puo' firmare token validi per qualsiasi `sub` (es. "alice") e superare `anyRequest().authenticated()`, ottenendo accesso completo.
+  proposed_fix: Caricare il segreto da variabile d'ambiente/secret manager, generarlo casualmente con almeno 256 bit, prevedere rotazione e un `kid` per la selezione della chiave. Non applicato.
+
+- id: SEC-002
+  file: src/main/java/com/lipari/bank/account/AccountController.java
+  line: 18-31
+  severity: CRITICAL
+  category: security
+  rule: SEC-01
+  issue: Gli endpoint restituiscono conti e movimenti di qualsiasi cliente senza verificare la proprieta' rispetto all'utente autenticato (IDOR).
+  evidence: `getAccount(@PathVariable Long id)` e `listAllWithMovements()` non confrontano `account.customerId` con il principal: un utente autenticato legge saldi e movimenti di tutti i conti, e `with-movements` li espone tutti in blocco.
+  proposed_fix: Risolvere username -> customer, verificare che il conto appartenga al cliente e rispondere 403/404 in caso contrario; limitare `with-movements` a un ruolo amministrativo esplicito. Non applicato.
+
+- id: SEC-003
+  file: src/main/java/com/lipari/bank/movement/MovementController.java
+  line: 19-28
+  severity: CRITICAL
+  category: security
+  rule: SEC-01
+  issue: Trasferimenti e lettura movimenti accettano ID conto dal client senza controllo di proprieta'.
+  evidence: `POST /api/movements/transfer` usa `req.getFromAccountId()` come prova di autorizzazione: un utente puo' addebitare il conto di un altro cliente; `GET /api/movements?accountId=` espone i movimenti di qualsiasi conto.
+  proposed_fix: Derivare il conto di addebito dal principal o verificare la proprieta' di `fromAccountId` prima del trasferimento, e verificare che `accountId` in lettura appartenga al chiamante. Non applicato.
+
+- id: SEC-004
+  file: src/main/resources/application.yml
+  line: 5-7
+  severity: HIGH
+  category: security
+  rule: SEC-02
+  issue: Credenziali del database in chiaro nella configurazione versionata e connessione senza TLS.
+  evidence: `username: lipariuser` / `password: liparipassword` e `useSSL=false` espongono le credenziali a chiunque acceda al repository e le trasmettono in chiaro sulla rete.
+  proposed_fix: Spostare le credenziali su variabili d'ambiente/secret manager, abilitare TLS (`useSSL=true` con verifica del certificato) e usare un utente DB con privilegi minimi. Non applicato.
+
+- id: SEC-005
+  file: src/main/java/com/lipari/bank/security/JwtService.java
+  line: 21-37
+  severity: MEDIUM
+  category: security
+  rule: SEC-03
+  issue: I token non vincolano esplicitamente l'algoritmo e non contengono/verificano issuer e audience; non e' prevista revoca.
+  evidence: `signWith(signingKey())` sceglie l'algoritmo dalla lunghezza della chiave e `parseUsername` accetta qualunque algoritmo HMAC compatibile; senza `iss`/`aud` un token emesso per un altro contesto resta valido, e non esiste meccanismo di revoca entro l'ora di scadenza.
+  proposed_fix: Fissare esplicitamente l'algoritmo atteso, aggiungere e verificare `iss` e `aud` nel parser, e prevedere rotazione/revoca (es. `jti` con denylist o scadenza piu' breve con refresh). Non applicato.
+
+- id: SEC-006
+  file: src/main/java/com/lipari/bank/web/AuthController.java
+  line: 21-32
+  severity: MEDIUM
+  category: security
+  rule: SEC-01
+  issue: Il login distingue utente inesistente da password errata e non prevede protezione contro tentativi ripetuti.
+  evidence: Con username inesistente `queryForObject` lancia `EmptyResultDataAccessException` gestita come 500 "internal error", mentre una password errata restituisce 401: la differenza consente enumerazione degli account; inoltre non c'e' rate limiting o lockout.
+  proposed_fix: Gestire l'assenza dell'utente con lo stesso 401 e lo stesso messaggio della password errata, validare username/password nulli e introdurre rate limiting/lockout sul login. Non applicato.
+
+- id: SEC-007
+  file: src/main/java/com/lipari/bank/security/SecurityConfig.java
+  line: 29-31
+  severity: MEDIUM
+  category: security
+  rule: SEC-08
+  issue: L'intero namespace `/actuator/**` e' pubblico.
+  evidence: `requestMatchers("/api/auth/**", "/actuator/**").permitAll()` apre qualsiasi endpoint di management futuro; oggi e' esposto solo `health,info`, ma l'allowlist e' piu' ampia del necessario e non tiene conto di dettagli o env.
+  proposed_fix: Consentire in chiaro solo `/actuator/health` e `/actuator/info`, proteggere gli altri endpoint o esporli su una porta di management separata. Non applicato.
+
+- id: SEC-008
+  file: src/main/resources/db/changelog/001-base-schema.yaml
+  line: 63-78
+  severity: MEDIUM
+  category: security
+  rule: SEC-08
+  issue: Il changelog versionato crea utenti con credenziali note e relativi hash BCrypt.
+  evidence: Il changeSet `005-seed-demo-data` inserisce `alice`/`bob` con hash delle password "alice123" e "bob123" documentate nel commento: in ogni ambiente che applica il changelog esistono credenziali di default valide.
+  proposed_fix: Eseguire il seed solo in profilo di sviluppo con password generate, oppure rimuoverlo dal changelog di produzione e forzare il cambio password al primo accesso. Non applicato.
+
+NOTES: Il principal del token e' solo lo username e l'autenticazione ha authorities vuote: i controlli di proprieta' richiesti da SEC-002/003 vanno implementati lato server, non delegati al client.
+```

@@ -1,0 +1,12 @@
+{
+  "description": "Prepara una review dei movimenti che legge i saldi veri, simula il trasferimento e cita la policy esposta come resource.",
+  "messages": [
+    {
+      "role": "user",
+      "content": {
+        "type": "text",
+        "text": "Sei il movements-reviewer del LipariBank. Devi rivedere: src/main/java/com/lipari/bank/movement/MovementService.java\n\nL'importo indicato e' 100.\n\nPrima di scrivere i rilievi:\n\n1. Identifica i conti e l'importo coinvolti dal cambiamento. Gli ID del seed\n   locale sono 1 e 2; verifica che esistano invece di fidarti dell'esempio.\n2. Per ogni conto coinvolto chiama `get_account_balance` e usa il saldo reale\n   come evidenza. In OpenCode i tool hanno il prefisso `finbank_`, quindi\n   `finbank_get_account_balance`. Non dedurre un saldo dal codice.\n3. Se il cambiamento riguarda un trasferimento, chiama\n   `simulate_transfer_what_if` con gli stessi conti e lo stesso importo. Riporta\n   `would_succeed`, `reason` e i saldi prima/dopo. Se la simulazione dice che\n   l'operazione fallirebbe (fondi insufficienti, conto non attivo, stesso conto,\n   valuta diversa, importo oltre il tetto), trattalo come un rilievo con la\n   prova numerica.\n4. Se servono i movimenti recenti per capire lo stato, chiama\n   `list_account_movements` senza chiedere liste intere: il tetto e' del server.\n5. Prima di citare una soglia o una regola, leggi la resource\n   `finbank://policies/aml` con `read_mcp_resource` e cita documento e sezione.\n   Per la simulazione leggi anche `finbank://policies/transfers`.\n6. Se un tool restituisce un errore esplicito (backend irraggiungibile,\n   timeout, 401, 404, risposta incompleta), scrivi \"verifica bloccata\" e\n   riporta l'errore. Non concludere che il saldo e' zero o che non ci sono\n   movimenti.\n7. Non esiste alcun tool che muova denaro. Non chiedere di eseguire un\n   bonifico e non proporre di farlo.\n\nScrivi i rilievi nel formato della skill `review-findings-format`, massimo 8,\nordinati per gravita. Se il codice e' corretto scrivi `NESSUNA VIOLAZIONE`, ma\nsolo dopo aver verificato i dati reali."
+      }
+    }
+  ]
+}

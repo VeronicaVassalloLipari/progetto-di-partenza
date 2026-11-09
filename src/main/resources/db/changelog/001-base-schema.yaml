@@ -22,7 +22,7 @@ databaseChangeLog:
               - column: { name: id, type: BIGINT, autoIncrement: true, constraints: { primaryKey: true, nullable: false } }
               - column: { name: customer_id, type: BIGINT, constraints: { nullable: false, foreignKeyName: fk_account_customer, references: "customer(id)" } }
               - column: { name: iban, type: VARCHAR(34), constraints: { nullable: false, unique: true } }
-              - column: { name: balance, type: DECIMAL(19,2), constraints: { nullable: false } }
+              - column: { name: balance, type: "DECIMAL(19,2)", constraints: { nullable: false } }
               - column: { name: currency, type: VARCHAR(3), defaultValue: "EUR", constraints: { nullable: false } }
               - column: { name: status, type: VARCHAR(16), defaultValue: "ACTIVE", constraints: { nullable: false } }
               - column: { name: created_at, type: TIMESTAMP, defaultValueComputed: CURRENT_TIMESTAMP }
@@ -37,7 +37,7 @@ databaseChangeLog:
               - column: { name: id, type: BIGINT, autoIncrement: true, constraints: { primaryKey: true, nullable: false } }
               - column: { name: account_id, type: BIGINT, constraints: { nullable: false, foreignKeyName: fk_movement_account, references: "account(id)" } }
               - column: { name: type, type: VARCHAR(16), constraints: { nullable: false } }
-              - column: { name: amount, type: DECIMAL(19,2), constraints: { nullable: false } }
+              - column: { name: amount, type: "DECIMAL(19,2)", constraints: { nullable: false } }
               - column: { name: counterparty_account_id, type: BIGINT }
               - column: { name: description, type: VARCHAR(255) }
               - column: { name: executed_at, type: TIMESTAMP, defaultValueComputed: CURRENT_TIMESTAMP }

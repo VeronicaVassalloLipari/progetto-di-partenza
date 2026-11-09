@@ -11,6 +11,17 @@ node_modules/
 # Ambiente e segreti
 .env
 
+# Python del server MCP
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# Log locali del backend
+backend-run.log
+backend-run.err.log
+
 # Metadati di editor e di sistema
 .idea/
 .vscode/

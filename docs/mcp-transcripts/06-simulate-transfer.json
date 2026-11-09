@@ -1,0 +1,32 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\"simulated\":true,\"side_effects\":\"none\",\"amount\":\"100.00\",\"currency\":\"EUR\",\"from_account\":{\"account_id\":1,\"balance_before\":\"1000.00\",\"balance_after\":\"900.00\"},\"to_account\":{\"account_id\":2,\"balance_before\":\"500.00\",\"balance_after\":\"600.00\"},\"would_succeed\":true,\"reason\":\"ok\",\"limits\":{\"max_amount\":\"1000000.00\"},\"policy_resource\":\"finbank://policies/transfers\",\"read_at\":\"2026-11-08T11:41:54+00:00\"}"
+    }
+  ],
+  "structuredContent": {
+    "simulated": true,
+    "side_effects": "none",
+    "amount": "100.00",
+    "currency": "EUR",
+    "from_account": {
+      "account_id": 1,
+      "balance_before": "1000.00",
+      "balance_after": "900.00"
+    },
+    "to_account": {
+      "account_id": 2,
+      "balance_before": "500.00",
+      "balance_after": "600.00"
+    },
+    "would_succeed": true,
+    "reason": "ok",
+    "limits": {
+      "max_amount": "1000000.00"
+    },
+    "policy_resource": "finbank://policies/transfers",
+    "read_at": "2026-11-08T11:41:54+00:00"
+  },
+  "isError": false
+}

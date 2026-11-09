@@ -1,0 +1,125 @@
+{
+  "tools": [
+    {
+      "name": "get_account_balance",
+      "title": "Get Account Balance",
+      "description": "Legge il saldo reale di un conto LipariBank dal backend.\n\nUsa questo tool quando una decisione dipende dallo stato reale di un conto:\ndurante una review di codice che tocca i movimenti, prima di una\nsimulazione, o quando devi verificare un saldo invece di dedurlo dal codice.\nNon usarlo per elencare i movimenti (usa list_account_movements) ne per\nsimulare un trasferimento (usa simulate_transfer_what_if).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "account_id": {
+            "description": "ID numerico del conto LipariBank (per il seed locale: 1 o 2). Non passare un IBAN, un nome o una chiave inventata.",
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "account_id"
+        ],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "idempotentHint": true
+      },
+      "_meta": {
+        "fastmcp": {
+          "tags": []
+        }
+      }
+    },
+    {
+      "name": "list_account_movements",
+      "title": "List Account Movements",
+      "description": "Legge i movimenti di un conto, dal piu' recente, con un tetto lato server.\n\nUsa questo tool solo quando servono davvero i movimenti recenti per capire\nlo stato di un conto durante una review. Il chiamante non decide quanti\nmovimenti vedere: il server taglia a MAX_MOVEMENTS e dichiara quanti ne ha\nrestituiti e se il risultato e' troncato. Non usarlo per il saldo (usa\nget_account_balance) ne per simulare un trasferimento.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "account_id": {
+            "description": "ID numerico del conto LipariBank (per il seed locale: 1 o 2). Non passare un IBAN o un nome.",
+            "minimum": 1,
+            "type": "integer"
+          },
+          "limit": {
+            "default": 10,
+            "description": "Numero massimo di movimenti da restituire. Default 10. Il server applica comunque un tetto di 20: un valore piu' alto viene ridotto e il risultato lo dichiara.",
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "account_id"
+        ],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "idempotentHint": true
+      },
+      "_meta": {
+        "fastmcp": {
+          "tags": []
+        }
+      }
+    },
+    {
+      "name": "simulate_transfer_what_if",
+      "title": "Simulate Transfer What If",
+      "description": "Simula un trasferimento e restituisce i saldi prima e dopo, senza muovere denaro.\n\nUsa questo tool quando devi rispondere a \"cosa succederebbe se spostassi X\ndal conto A al conto B\". Il tool legge soltanto lo stato del backend\n(GET /api/accounts/{id}): non chiama /api/movements/transfer e non modifica\nsaldi o movimenti. E' una simulazione, non un bonifico.\n\nApplica le regole pubblicate in finbank://policies/transfers: conti diversi,\nimporto positivo e con al massimo 2 decimali, tetto del server, conti\nesistenti e ACTIVE, stessa valuta, fondi sufficienti. Se una regola non e'\nsoddisfatta, wouldSucceed e' false e reason dice quale; i saldi after\nrestano uguali ai saldi before.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "from_account_id": {
+            "description": "ID numerico del conto di partenza (per il seed locale: 1).",
+            "minimum": 1,
+            "type": "integer"
+          },
+          "to_account_id": {
+            "description": "ID numerico del conto di arrivo (per il seed locale: 2).",
+            "minimum": 1,
+            "type": "integer"
+          },
+          "amount": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Importo in EUR, maggiore di zero e con al massimo 2 decimali. Il server applica un tetto di 1000000.00 EUR."
+          }
+        },
+        "required": [
+          "from_account_id",
+          "to_account_id",
+          "amount"
+        ],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "idempotentHint": true
+      },
+      "_meta": {
+        "fastmcp": {
+          "tags": []
+        }
+      }
+    }
+  ]
+}

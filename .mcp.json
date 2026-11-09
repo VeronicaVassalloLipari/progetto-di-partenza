@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "finbank": {
+      "type": "stdio",
+      "command": "C:/Users/Veronica Vassallo/AppData/Local/Programs/Python/Python313/python.exe",
+      "args": [
+        "C:/Book progetti/Progetto AI Agentic con Claude Code/progetto-di-partenza/progetto-di-partenza/finbank-mcp/server.py"
+      ],
+      "env": {
+        "FINBANK_BASE_URL": "http://localhost:8080",
+        "FINBANK_USERNAME": "${FINBANK_USERNAME}",
+        "FINBANK_PASSWORD": "${FINBANK_PASSWORD}"
+      }
+    }
+  }
+}

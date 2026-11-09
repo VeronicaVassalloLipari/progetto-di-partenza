@@ -1,0 +1,19 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\"account_id\":1,\"returned\":0,\"limit_requested\":1000,\"limit_applied\":20,\"truncated\":false,\"movements\":[],\"read_at\":\"2026-11-08T11:41:58+00:00\",\"note\":\"Il backend ha risposto con 0 movimenti per questo conto.\"}"
+    }
+  ],
+  "structuredContent": {
+    "account_id": 1,
+    "returned": 0,
+    "limit_requested": 1000,
+    "limit_applied": 20,
+    "truncated": false,
+    "movements": [],
+    "read_at": "2026-11-08T11:41:58+00:00",
+    "note": "Il backend ha risposto con 0 movimenti per questo conto."
+  },
+  "isError": false
+}

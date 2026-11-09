@@ -1,0 +1,18 @@
+Data: 2026-11-08
+Scopo: verificare che `simulate_transfer_what_if` non abbia mosso denaro.
+
+Comando:
+
+  $login = Invoke-RestMethod -Method Post -Uri http://localhost:8080/api/auth/login -ContentType 'application/json' -Body '{"username":"alice","password":"alice123"}'
+  $h = @{ Authorization = "Bearer $($login.token)" }
+  (Invoke-RestMethod -Uri http://localhost:8080/api/accounts/1 -Headers $h).balance
+  (Invoke-RestMethod -Uri http://localhost:8080/api/accounts/2 -Headers $h).balance
+
+Risultato dopo la simulazione 1 -> 2 di 100.00 EUR:
+
+  Saldo conto 1: 1000.00
+  Saldo conto 2: 500.00
+
+I saldi sono identici a quelli letti prima della simulazione. Il server ha
+chiamato solo GET /api/accounts/{id}: nessun POST /api/movements/transfer,
+nessun movimento creato.

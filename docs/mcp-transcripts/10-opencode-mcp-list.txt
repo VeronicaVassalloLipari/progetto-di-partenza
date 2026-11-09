@@ -1,0 +1,11 @@
+Data: 2026-11-08
+Directory: C:\Book progetti\Progetto AI Agentic con Claude Code\progetto-di-partenza\progetto-di-partenza
+Comando: opencode mcp list
+
+Risultato:
+
+MCP Servers
+  ✓ finbank connected
+      C:/Users/Veronica Vassallo/AppData/Local/Programs/Python/Python313/python.exe C:/Book progetti/Progetto AI Agentic con Claude Code/progetto-di-partenza/progetto-di-partenza/finbank-mcp/server.py
+
+1 server(s)

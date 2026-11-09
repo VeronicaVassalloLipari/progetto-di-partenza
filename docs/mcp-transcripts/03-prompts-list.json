@@ -1,0 +1,26 @@
+{
+  "prompts": [
+    {
+      "name": "review_movements_with_real_data",
+      "title": "Review movimenti con dati reali",
+      "description": "Prepara una review dei movimenti che legge i saldi veri, simula il trasferimento e cita la policy esposta come resource.",
+      "arguments": [
+        {
+          "name": "changed_file",
+          "description": "Percorso del file o del diff da rivedere.\n\nProvide a value matching the following JSON schema: {\"description\":\"Percorso del file o del diff da rivedere.\",\"type\":\"string\"}. Encode non-string values as JSON.",
+          "required": true
+        },
+        {
+          "name": "amount",
+          "description": "Importo coinvolto, ad esempio '100.00'. Se non lo conosci, ricavalo dal codice o dal test prima di simulare.\n\nProvide a value matching the following JSON schema: {\"description\":\"Importo coinvolto, ad esempio '100.00'. Se non lo conosci, ricavalo dal codice o dal test prima di simulare.\",\"type\":\"string\"}. Encode non-string values as JSON.",
+          "required": false
+        }
+      ],
+      "_meta": {
+        "fastmcp": {
+          "tags": []
+        }
+      }
+    }
+  ]
+}

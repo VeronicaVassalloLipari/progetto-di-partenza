@@ -1,0 +1,28 @@
+{
+  "resources": [
+    {
+      "name": "aml-policy",
+      "title": "Policy AML LipariBank",
+      "uri": "finbank://policies/aml",
+      "description": "Policy antiriciclaggio del LipariBank: soglie, PEP, watchlist, audit e pattern sospetti. E' un documento statico letto da file, non un valore ricordato dal modello. Cita sezione e soglia.",
+      "mimeType": "text/markdown",
+      "_meta": {
+        "fastmcp": {
+          "tags": []
+        }
+      }
+    },
+    {
+      "name": "transfer-policy",
+      "title": "Regole di trasferimento LipariBank",
+      "uri": "finbank://policies/transfers",
+      "description": "Regole applicate da simulate_transfer_what_if: conti diversi, importo positivo, tetto del server, conti attivi, stessa valuta, fondi sufficienti e nessun side effect. E' un documento statico letto da file.",
+      "mimeType": "text/markdown",
+      "_meta": {
+        "fastmcp": {
+          "tags": []
+        }
+      }
+    }
+  ]
+}

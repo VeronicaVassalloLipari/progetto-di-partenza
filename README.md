@@ -65,6 +65,12 @@ progetto-di-partenza/
 ├── Dockerfile
 ├── docker-compose.yml
 ├── .gitignore
+├── .mcp.json                  server MCP per Claude Code
+├── .opencode/                 agenti, skill, config OpenCode
+├── finbank-mcp/               server MCP read-only (FASE 3)
+│   ├── server.py
+│   ├── policies/transfer-rules.md
+│   └── README.md
 └── src/
     ├── main/
     │   ├── java/com/lipari/bank/
@@ -121,7 +127,7 @@ Il controllo delle review vive nel repository e parte da solo. Gli asset sono sc
 | Reviewer contratto API | `.opencode/agents/api-contract-reviewer.md` | Parte solo su ciò che la banca espone: `*Controller.java`, `dto/`, verbi, codici, validazione, error body. | `Fai la review del contratto di src/main/java/com/lipari/bank/movement/dto/TransferRequest.java` |
 | Reviewer sicurezza | `.opencode/agents/security-reviewer.md` | Parte solo sulla sicurezza: autenticazione, autorizzazione, JWT, segreti, password, injection, esposizione dati, header/CORS/CSRF. | `Fai la review di src/main/java/com/lipari/bank/security/SecurityConfig.java` |
 | Formato condiviso | `.opencode/skills/review-findings-format/SKILL.md` | Fissa file/riga, gravità, correzione non applicata, tono pari e blocco machine-readable. | Caricata dai quattro reviewer prima dell'output; `skill review-findings-format` |
-| Policy AML | `.opencode/skills/lipari-aml-policy/SKILL.md` | Soglie, PEP, watchlist, audit, pattern sospetti. | Caricata dal solo `amount-compliance-reviewer` |
+| Policy AML | `.opencode/skills/lipari-aml-policy/SKILL.md` | Soglie, PEP, watchlist, audit, pattern sospetti; e' anche la fonte della resource `finbank://policies/aml` (FASE 3). | Caricata dal solo `amount-compliance-reviewer`; la resource viene letta e citata dallo stesso reviewer |
 | Routing | `AGENTS.md` | Ordine di priorità, caso `MovementController.java` e nota sulla suite. | Vale per ogni richiesta di review interattiva |
 | Suite quattro reviewer | `.opencode/code-review-suite.ts` | Lancia i quattro reviewer in parallelo, applica budget, deduplica e scrive report MD/JSON. | `npm run review -- "src/main/java/com/lipari/bank" --out docs/review-runs/run-001` |
 
@@ -138,7 +144,7 @@ La regola qui sopra vale per la **review interattiva**. La suite da riga di coma
 ### Le tre decisioni
 
 1. **Dove passano i confini.** Per tipo di cambiamento, con priorità contratto > denaro > movimenti interni > sicurezza, perché il costo di sbagliare è diverso: un breaking change sul contratto lo paga il cliente, un importo sbagliato lo paga la compliance, un bug interno lo paga la banca, una falla lo paga chiunque. Sul caso `MovementController.java` vince il contratto; gli altri tre sono esclusi per description, non per buona volontà.
-2. **Policy AML: skill o MCP?** Skill. La policy è un manuale operativo statico, versionato nel repository, leggibile da chiunque debba applicarlo (oggi i reviewer, domani un quinto reviewer o un controllo di compliance). Un MCP server servirebbe per una valutazione a runtime: ha senso per watchlist e PEP, non per le soglie.
+2. **Policy AML: skill o MCP?** La fonte resta la skill, ma ora è anche una resource MCP. La policy è un manuale operativo statico, versionato nel repository, leggibile da chiunque debba applicarlo (oggi i reviewer, domani un quinto reviewer o un controllo di compliance). Il server MCP `finbank` la espone come `finbank://policies/aml`: il reviewer la legge e la cita dalla resource, non a memoria. Il server serve per lo stato dinamico (saldi, movimenti, simulazione), non per inventare una valutazione AML a runtime: watchlist e PEP restano servizi esterni.
 3. **Dove vive il formato.** In una skill caricata dai quattro (`review-findings-format`), non ripetuta nei system prompt e non imposta dallo slash command: un quinto reviewer scritto da qualcun altro deve solo caricare la stessa skill per uscire nello stesso formato, senza che nessuno glielo spieghi.
 
 ### Cosa ho cambiato dell'ereditato di Gino, e perché
@@ -260,4 +266,132 @@ L'unico bug vero era nell'orchestratore, non nella skill: il parser cercava `pro
 - `docs/review-runs/test-unparseable/report.md` — output in prosa: sezione fallita con output grezzo, exit `3`.
 
 I test `test-*` sono prove di robustezza, non run di prodotto: servono a dimostrare che i punti di rottura dichiarati sopra sono veri e che il report non perde informazione quando qualcosa va storto.
+
+---
+
+## FASE 3 — Server MCP `finbank`
+
+### 1. Descrizione
+
+La FASE 3 introduce un server MCP chiamato `finbank`, collegato al backend REST LipariBank tramite HTTP.
+
+Il server consente a un modello linguistico di consultare informazioni bancarie reali e simulare operazioni senza modificare i dati.
+
+Il server è **read-only**: non esegue bonifici e non permette di modificare i saldi.
+
+### 2. Primitive esposte
+
+Il server espone tre Tool, due Resources e un Prompt.
+
+**Tool**
+
+| Tool                        | Funzionalità                                                                        |
+| --------------------------- | ----------------------------------------------------------------------------------- |
+| `get_account_balance`       | Recupera saldo, valuta e stato di un conto.                                         |
+| `list_account_movements`    | Recupera i movimenti recenti di un conto, con un limite massimo di 20 risultati.    |
+| `simulate_transfer_what_if` | Simula un trasferimento e restituisce i saldi previsti, senza eseguire il bonifico. |
+
+**Resources**
+
+| Resource URI                   | Contenuto                                            |
+| ------------------------------ | ---------------------------------------------------- |
+| `finbank://policies/aml`       | Policy antiriciclaggio (AML).                        |
+| `finbank://policies/transfers` | Regole applicate alla simulazione dei trasferimenti. |
+
+**Prompt**
+
+`review_movements_with_real_data`: guida il reviewer nell'analisi dei movimenti utilizzando i dati reali esposti dal server.
+
+**Motivazione della suddivisione**
+
+I Tool vengono utilizzati per recuperare dati dinamici e simulare operazioni. Le Resources espongono documentazione e regole statiche, versionate nel repository. Il Prompt definisce il flusso di lavoro da seguire durante la review.
+
+### 3. Avvio e verifica
+
+Il server utilizza il trasporto STDIO e comunica con i client MCP.
+
+Installazione delle dipendenze:
+
+```bash
+python -m pip install fastmcp httpx
+```
+
+Avvio:
+
+```bash
+python finbank-mcp/server.py
+```
+
+Per verificare il server tramite MCP Inspector:
+
+```bash
+npx -y @modelcontextprotocol/inspector
+```
+
+Configurazione:
+
+- Transport Type: STDIO
+- Command: percorso dell'interprete Python.
+- Arguments: percorso del file `finbank-mcp/server.py`.
+
+Dopo la connessione, dalla sezione Tools è possibile visualizzare ed eseguire i tre strumenti esposti dal server.
+
+### 4. Autenticazione e identità utilizzata
+
+Il server MCP si autentica verso il backend LipariBank tramite l'endpoint REST:
+
+`POST /api/auth/login`
+
+Il login restituisce un token JWT, utilizzato nelle successive richieste HTTP attraverso l'header:
+
+`Authorization: Bearer <token>`
+
+In ambiente locale viene utilizzata l'utenza demo `alice`. Le credenziali vengono lette dalle variabili d'ambiente `FINBANK_USERNAME` e `FINBANK_PASSWORD`, con fallback demo previsto per il bootcamp.
+
+Il server utilizza quindi un'identità di servizio condivisa: non riceve automaticamente l'identità dell'utente finale che interagisce con il modello.
+
+In un ambiente di produzione sarebbe necessario introdurre un meccanismo di autenticazione e autorizzazione per utente, con tracciamento dell'identità e delle richieste.
+
+### 5. Esempio di esecuzione
+
+È stato verificato il funzionamento del Tool `get_account_balance` tramite MCP Inspector.
+
+Richiesta:
+
+```json
+{
+  "account_id": 1
+}
+```
+
+Risposta:
+
+```json
+{
+  "account_id": 1,
+  "balance": "1000.00",
+  "currency": "EUR",
+  "status": "ACTIVE"
+}
+```
+
+Il risultato conferma che il server MCP riesce a interrogare il backend REST e a restituire il saldo del conto richiesto.
+
+### 6. Sicurezza e gestione degli errori
+
+Il server è progettato per operare in sola lettura:
+
+- Non espone strumenti che eseguono bonifici.
+- La simulazione del trasferimento non modifica i saldi.
+- Le richieste verso il backend utilizzano un token JWT.
+- Sono previsti timeout e limiti sul numero di movimenti restituiti.
+- Gli errori del backend vengono restituiti esplicitamente, senza inventare saldi o liste vuote.
+
+### 7. Limiti dichiarati
+
+Il server è progettato per un ambiente locale di bootcamp e non è production-grade.
+
+Non dispone di autenticazione per utente finale, multi-tenancy, rate limiting o audit completo per singolo utente.
+
+La sua responsabilità è consultare dati bancari e simulare operazioni, non eseguire transazioni finanziarie.
 

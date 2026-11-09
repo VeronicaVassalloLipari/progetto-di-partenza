@@ -1,0 +1,9 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "[not_found] Risorsa non trovata nel backend (HTTP 404) per /api/accounts/999 Nessun dato inventato: il tool non restituisce un saldo vuoto o un valore predefinito."
+    }
+  ],
+  "isError": true
+}

@@ -1,0 +1,23 @@
+Data: 2026-11-08
+Scopo: provare il taglio lato server quando il backend restituisce piu' di 20
+movimenti, senza inserire movimenti finti nel database reale.
+
+Metodo: il client MCP e' stato avviato in memoria e `server._bank` e' stato
+sostituito con un finto client che restituisce 30 movimenti. Il tool reale
+`list_account_movements` ha chiamato `_fetch_account` e ha applicato il tetto.
+
+Output:
+
+{
+  "returned": 20,
+  "limit_requested": 1000,
+  "limit_applied": 20,
+  "truncated": true
+}
+ids [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+fields ['amount', 'counterparty_account_id', 'executed_at', 'id', 'type']
+
+Con il backend reale, che ha 0 movimenti, la stessa chiamata restituisce
+`returned=0`, `limit_applied=20`, `truncated=false` (vedi
+`05-list-movements-cap.json`). In entrambi i casi il chiamante non decide il
+tetto e i campi esposti sono solo quelli utili alla review.

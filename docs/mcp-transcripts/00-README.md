@@ -21,6 +21,16 @@ seed `alice` / `alice123`.
 | `13-amount-compliance-reviewer.md` | l'`amount-compliance-reviewer` cita la policy letta dalla resource, non a memoria |
 | `14-balances-unchanged.txt` | dopo la simulazione i saldi sono ancora 1000.00 / 500.00 |
 | `16-list-movements-truncated.txt` | con 30 movimenti finti nel client, il tool restituisce 20 e `truncated=true` (nessun dato scritto nel DB) |
+| `17-prompt1-bench.md` | banco di prova da 20 richieste per `simulate_transfer_what_if`: 8 pertinenti, 6 ai limiti, 6 da non invocare (3 ambigue) |
+| `18-prompt2-docstrings.md` | critica delle tre docstring lette come un modello che deve decidere se invocare, con verifica finale sulla fusione dei tool |
+| `19-prompt3-failures.md` | semantica dei guasti del backend: cosa restituire, cosa non restituire e cosa concluderebbe il modello con un vuoto |
+| `20-subagent-mcp-invocation.md` | il `movements-reviewer` (sessione creata con `agent`, non fallback del CLI) invoca i tre tool e cita i `read_at` reali |
+
+Le prove `12` e `13` sono state raccolte con `opencode run --agent <subagent>`,
+che per un subagent fa fallback al default agent: dimostrano che i tool MCP
+rispondono con dati reali, non che a chiamarli sia il subagent. La prova che il
+subagent parta davvero e usi i tool è `20-subagent-mcp-invocation.md`, dove la
+sessione imposta esplicitamente `agent` come fa `code-review-suite`.
 
 ## Comandi usati
 

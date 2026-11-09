@@ -131,6 +131,32 @@ Il controllo delle review vive nel repository e parte da solo. Gli asset sono sc
 | Routing | `AGENTS.md` | Ordine di priorità, caso `MovementController.java` e nota sulla suite. | Vale per ogni richiesta di review interattiva |
 | Suite quattro reviewer | `.opencode/code-review-suite.ts` | Lancia i quattro reviewer in parallelo, applica budget, deduplica e scrive report MD/JSON. | `npm run review -- "src/main/java/com/lipari/bank" --out docs/review-runs/run-001` |
 
+### Tassonomia degli asset
+
+Riepilogo degli otto asset previsti dal bootcamp, mappati sui path reali del repository. Lo slash command `/review-pr`, assente nel repo di partenza, è stato creato in `.opencode/commands/`.
+
+| Asset | Tipo | File path | Quando attivato | Tool MCP usati |
+|---|---|---|---|---|
+| Reviewer dei movimenti (G1) | Subagent | `.opencode/agents/movements-reviewer.md` | Su un cambiamento che tocca la logica dei movimenti | `finbank_get_account_balance`, `finbank_list_account_movements`, `finbank_simulate_transfer_what_if`; `read_mcp_resource` per `finbank://policies/transfers` |
+| Reviewer degli importi (G1) | Subagent | `.opencode/agents/amount-compliance-reviewer.md` | Su un cambiamento che tocca un importo, un saldo, una valuta o una soglia AML | `finbank_get_account_balance`, `finbank_simulate_transfer_what_if`; `read_mcp_resource` su `finbank://policies/aml` |
+| Reviewer del contratto (G1) | Subagent | `.opencode/agents/api-contract-reviewer.md` | Su ciò che il LipariBank espone all'esterno (`*Controller.java`, `dto/`) | nessuno |
+| La quarta lente (G2) | Subagent | `.opencode/agents/security-reviewer.md` | Sulla sicurezza: autenticazione, autorizzazione, JWT, segreti, injection, header/CORS/CSRF | nessuno |
+| Skill del formato (G1) | Skill | `.opencode/skills/review-findings-format/SKILL.md` | Su ogni review, per la forma d'uscita | nessuno |
+| `/review-pr` | Slash command | `.opencode/commands/review-pr.md` | Manuale: `/review-pr [ref]` | (orchestrator: lancia `code-review-suite`) |
+| `code-review-suite` (era `code-review-suite.py`) | SDK orchestrator | `.opencode/code-review-suite.ts`, lanciato da `npm run review` | CLI standalone | (orchestrator) |
+| `finbank-mcp` | MCP server | `finbank-mcp/` (`server.py`) | Registrato in `.mcp.json`; con OpenCode nel blocco `mcp` di `.opencode/opencode.json` | (lui espone i tool) |
+
+**Scostamenti dal template.** Il template usa `.claude/agents/`, `.claude/skills/`,
+`.claude/commands/` e `code-review-suite.py` alla root; questo repo usa OpenCode,
+quindi `.opencode/agents/`, `.opencode/skills/`, `.opencode/code-review-suite.ts` e
+la configurazione MCP in `.mcp.json` più `.opencode/opencode.json`. Lo slash
+command `/review-pr` vive in `.opencode/commands/review-pr.md` e lancia la suite
+sul diff (`npm run review -- --diff <ref>`); il template lo collocava in
+`.claude/commands/`.
+«La quarta lente (G2)» è `security-reviewer`, il quarto perimetro aggiunto al G2.
+`finbank-mcp` è l'unico asset che espone tool MCP; gli altri li consumano o non
+ne usano.
+
 ### Regola di separazione dei perimetri
 
 I confini si separano per **tipo di cambiamento**, in ordine di priorità: prima il contratto verso l'esterno (Controller, DTO), poi il denaro (importi, valuta, AML), poi la logica interna dei movimenti, poi la sicurezza richiesta esplicitamente (autenticazione, autorizzazione, JWT, segreti, injection, header/CORS/CSRF). Vince il primo che corrisponde; gli altri non partono. Se il target non ricade in nessuno dei quattro, risponde l'agente principale.
